@@ -17,7 +17,7 @@ app.config( function ($httpProvider) {
 
 // Service
 
-app.service('VideosService', ['$window', '$rootScope', '$log', function ($window, $rootScope, $log) {
+app.service('VideosService', ['$window', '$rootScope', '$log', '$http', function ($window, $rootScope, $log, $http) {
 
     var service = this;
 
@@ -114,7 +114,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', function ($window
         youtube.videoId = id;
         youtube.videoTitle = title;
         return youtube;
-    }
+    };
 
     this.listResults = function (data) {
         results.length = 0;
@@ -128,9 +128,16 @@ app.service('VideosService', ['$window', '$rootScope', '$log', function ($window
             });
         }
         return results;
-    }
+    };
 
     this.queueVideo = function (id, title) {
+        var result = $http.put(
+            '/v1/video/store',
+            { video_id : id, name : title }
+        );
+
+        console.log(result);
+
         upcoming.push({
             id: id,
             title: title

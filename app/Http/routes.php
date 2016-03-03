@@ -11,8 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['prefix' => 'v1'], function() {
+    Route::group(['prefix' => 'video'], function() {
+        Route::put('store', 'VideoController@store');
+    });
 });
 
 /*
@@ -27,5 +29,7 @@ Route::get('/', function () {
 */
 
 Route::group(['middleware' => ['web']], function () {
-    //
+    Route::get('/', function () {
+        return view('welcome');
+    });
 });
