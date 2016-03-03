@@ -54,6 +54,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', function ($window
         youtube.ready = true;
         service.bindPlayer('placeholder');
         service.loadPlayer();
+        service.launchPlayer(upcoming[0].id, upcoming[0].title);
         $rootScope.$apply();
     };
 
@@ -71,9 +72,9 @@ app.service('VideosService', ['$window', '$rootScope', '$log', function ($window
             youtube.state = 'paused';
         } else if (event.data == YT.PlayerState.ENDED) {
             youtube.state = 'ended';
-            service.launchPlayer(upcoming[0].id, upcoming[0].title);
             service.archiveVideo(upcoming[0].id, upcoming[0].title);
-            service.deleteVideo(upcoming, upcoming[0].id);
+            service.launchPlayer(upcoming[0].id, upcoming[0].title);
+            service.deleteVideo('upcoming', upcoming[0].id);
         }
         $rootScope.$apply();
     }

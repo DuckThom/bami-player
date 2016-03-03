@@ -2,19 +2,19 @@
 <html data-ng-app="JukeTubeApp">
 <head>
     <meta charset="utf-8">
-    <title>JukeTube</title>
+    <title>Bami Player</title>
     <meta name="author" content="J. Thomas">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
     <link rel="icon" href="/favicon.ico">
 </head>
 <body data-ng-controller="VideosController">
 <header>
-    <h1>Juke<strong>Tube</strong></h1>
+    <h1>Bami<strong>Player</strong></h1>
     <form id="search" data-ng-submit="search()">
         <input id="query" name="q" type="text" placeholder="Search for a YouTube video" data-ng-model="query">
-        <input id="submit" type="image" src="search.png" alt="Search">
+        <input id="submit" type="image" src="/img/search.png" alt="Search">
     </form>
     <nav>
         <a id="play">{{ youtube.state }}</a>
@@ -55,7 +55,7 @@
     <em>Concept &amp; Design: <a href="http://jgthms.com">J. Thomas</a></em>
     Built with <a href="http://angularjs.org/">AngularJS</a>. Source code available on <a href="https://github.com/jgthms/juketube">GitHub</a>.
 </footer>
-<script src="angular.min.js"></script>
-<script src="app.js"></script>
+<script src="/js/angular.min.js"></script>
+<script src="/js/app.js"></script>
 </body>
 </html>
