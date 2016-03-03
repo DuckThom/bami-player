@@ -9,24 +9,40 @@ use App\Video;
 
 class VideoController extends Controller
 {
+    public function getUpcoming()
+    {
+        return response()->json([
+            'status'    => 'success',
+            'payload'   => Video::getUpcoming()
+        ]);
+    }
+
+    public function getHistory()
+    {
+        return response()->json([
+            'status'    => 'success',
+            'payload'   => Video::getHistory()
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'video_id' => 'required',
-            'name' => 'required'
+            'video_id'  => 'required',
+            'name'      => 'required'
         ]);
 
         if ($validator->passes()) {
             Video::setUpcoming($request->get('name'), $request->get('video_id'));
 
             return response()->json([
-                'status' => 'success',
-                'message' => 'Video has been added to the playlist'
+                'status'    => 'success',
+                'message'   => 'Video has been added to the playlist'
             ]);
         } else
             return response()->json([
-                'status' => 'failed',
-                'message' => $validator->errors()
+                'status'    => 'failed',
+                'message'   => $validator->errors()
             ], 400);
     }
 }

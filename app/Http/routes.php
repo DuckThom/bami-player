@@ -13,6 +13,9 @@
 
 Route::group(['prefix' => 'v1'], function() {
     Route::group(['prefix' => 'video'], function() {
+        Route::get('get/upcoming', 'VideoController@getUpcoming');
+        Route::get('get/history', 'VideoController@getHistory');
+
         Route::put('store', 'VideoController@store');
     });
 });

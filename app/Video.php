@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
+use DB;
+
 class Video extends Model {
 
     protected $guarded = ['id'];
@@ -15,7 +17,7 @@ class Video extends Model {
      */
     public static function setUpcoming($name, $video_id)
     {
-        return self::table('upcoming')->insert([
+        return DB::table('upcoming')->insert([
             'video_id'  => $video_id,
             'name'      => $name
         ]);
@@ -29,9 +31,9 @@ class Video extends Model {
      */
     public static function setHistory($video_id)
     {
-        $video = self::table('upcoming')->where('video_id', $video_id);
+        $video = DB::table('upcoming')->where('video_id', $video_id);
 
-        $history = self::table('history')->insert([
+        $history = DB::table('history')->insert([
             'video_id'  => $video->video_id,
             'name'      => $video->name
         ]);
@@ -48,7 +50,7 @@ class Video extends Model {
      */
     public static function getUpcoming()
     {
-        return self::table('upcoming')->orderBy('created_at', 'asc')->get();
+        return DB::table('upcoming')->orderBy('created_at', 'asc')->get();
     }
 
     /**
@@ -58,7 +60,7 @@ class Video extends Model {
      */
     public static function getHistory()
     {
-        return self::table('history')->orderBy('created_at', 'desc')->take(10)->get();
+        return DB::table('history')->orderBy('created_at', 'desc')->take(10)->get();
     }
 
 }

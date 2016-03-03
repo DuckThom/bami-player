@@ -32,18 +32,38 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', function
         state: 'stopped'
     };
     var results = [];
-    var upcoming = [
-        {id: 'kRJuY6ZDLPo', title: 'La Roux - In for the Kill (Twelves Remix)'},
-        {id: '45YSGFctLws', title: 'Shout Out Louds - Illusions'},
-        {id: 'ktoaj1IpTbw', title: 'CHVRCHES - Gun'},
-        {id: '8Zh0tY2NfLs', title: 'N.E.R.D. ft. Nelly Furtado - Hot N\' Fun (Boys Noize Remix) HQ'},
-        {id: 'zwJPcRtbzDk', title: 'Daft Punk - Human After All (SebastiAn Remix)'},
-        {id: 'sEwM6ERq0gc', title: 'HAIM - Forever (Official Music Video)'},
-        {id: 'fTK4XTvZWmk', title: 'Housse De Racket â˜â˜€â˜ Apocalypso'}
-    ];
-    var history = [
-        {id: 'XKa7Ywiv734', title: '[OFFICIAL HD] Daft Punk - Give Life Back To Music (feat. Nile Rodgers)'}
-    ];
+    var upcoming = [];
+    var history = [];
+
+    $http.get('/v1/video/get/upcoming').then(
+        function success(response) {
+            var data = response.data.payload;
+            for(var i = 0; i < data.length; i++) {
+                upcoming.push({
+                    id: data[i].video_id,
+                    title: data[i].name
+                });
+            }
+        },
+        function failure(response) {
+            $log.error(response);
+        }
+    );
+
+    $http.get('/v1/video/get/history').then(
+        function success(response) {
+            var data = response.data.payload;
+            for(var i = 0; i < data.length; i++) {
+                history.push({
+                    id: data[i].video_id,
+                    title: data[i].name
+                });
+            }
+        },
+        function failure(response) {
+            $log.error(response);
+        }
+    );
 
     var lists = [];
     lists['upcoming'] = upcoming;
