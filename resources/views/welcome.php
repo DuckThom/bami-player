@@ -5,7 +5,7 @@
     <title>Bami Player</title>
     <meta name="author" content="J. Thomas">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/css/style.css" type="text/css">
     <link rel="icon" href="/favicon.ico">
 </head>

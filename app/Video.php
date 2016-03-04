@@ -44,6 +44,17 @@ class Video extends Model {
     }
 
     /**
+     * Check if the video is in the upcoming playlist
+     *
+     * @param $video_id
+     * @return bool
+     */
+    public static function isUpcoming($video_id)
+    {
+        return DB::table('upcoming')->where('video_id', $video_id)->count() > 0;
+    }
+
+    /**
      * Get the list of upcoming videos
      *
      * @return mixed
@@ -61,6 +72,16 @@ class Video extends Model {
     public static function getHistory()
     {
         return DB::table('history')->orderBy('created_at', 'desc')->take(10)->get();
+    }
+
+    /**
+     * Remove the video from the playlist
+     *
+     * @param $video_id
+     */
+    public static function removeFromPlaylist($video_id)
+    {
+        DB::table('upcoming')->where('video_id', $video_id)->delete();
     }
 
 }

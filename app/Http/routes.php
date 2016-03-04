@@ -13,10 +13,11 @@
 
 Route::group(['prefix' => 'v1'], function() {
     Route::group(['prefix' => 'video'], function() {
-        Route::get('get/upcoming', 'VideoController@getUpcoming');
-        Route::get('get/history', 'VideoController@getHistory');
+        Route::get('update', 'VideoController@update');
 
         Route::put('store', 'VideoController@store');
+
+        Route::delete('delete/{video_id}', 'VideoController@delete');
     });
 });
 

@@ -4,7 +4,7 @@ var app = angular.module('JukeTubeApp', []);
 
 app.run(function () {
     var tag = document.createElement('script');
-    tag.src = "http://www.youtube.com/iframe_api";
+    tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 });
@@ -17,7 +17,7 @@ app.config( function ($httpProvider) {
 
 // Service
 
-app.service('VideosService', ['$window', '$rootScope', '$log', '$http', function ($window, $rootScope, $log, $http) {
+app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeout', function ($window, $rootScope, $log, $http, $timeout) {
 
     var service = this;
 
@@ -74,15 +74,19 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', function
         youtube.ready = true;
         service.bindPlayer('placeholder');
         service.loadPlayer();
-        service.launchPlayer(upcoming[0].id, upcoming[0].title);
+
         $rootScope.$apply();
     };
 
     function onYoutubeReady (event) {
         $log.info('YouTube Player is ready');
-        youtube.player.cueVideoById(history[0].id);
-        youtube.videoId = history[0].id;
-        youtube.videoTitle = history[0].title;
+
+        if (typeof upcoming[0] != 'undefined')
+        {
+            service.archiveVideo(upcoming[0].id, upcoming[0].title);
+            service.launchPlayer(upcoming[0].id, upcoming[0].title);
+            service.deleteVideo('upcoming', upcoming[0].id);
+        }
     }
 
     function onYoutubeStateChange (event) {
@@ -106,12 +110,15 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', function
 
     this.createPlayer = function () {
         $log.info('Creating a new Youtube player for DOM id ' + youtube.playerId + ' and video ' + youtube.videoId);
+
         return new YT.Player(youtube.playerId, {
             height: youtube.playerHeight,
             width: youtube.playerWidth,
+            videoId: 'S5PvBzDlZGs',
             playerVars: {
-                rel: 0,
-                showinfo: 0
+                'rel': 0,
+                'showinfo': 0,
+                'autoplay': 1
             },
             events: {
                 'onReady': onYoutubeReady,
@@ -133,11 +140,13 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', function
         youtube.player.loadVideoById(id);
         youtube.videoId = id;
         youtube.videoTitle = title;
+
         return youtube;
     };
 
     this.listResults = function (data) {
         results.length = 0;
+
         for (var i = data.items.length - 1; i >= 0; i--) {
             results.push({
                 id: data.items[i].id.videoId,
@@ -147,33 +156,47 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', function
                 author: data.items[i].snippet.channelTitle
             });
         }
+
         return results;
     };
 
-    this.queueVideo = function (id, title) {
-        var result = $http.put(
-            '/v1/video/store',
-            { video_id : id, name : title }
-        );
-
-        console.log(result);
+    this.queueVideo = function (id, title, save) {
+        if (save) {
+            $http.put(
+                '/v1/video/store',
+                {video_id: id, name: title}
+            );
+        }
 
         upcoming.push({
             id: id,
             title: title
         });
+
         return upcoming;
     };
 
     this.archiveVideo = function (id, title) {
+        $http.put(
+            '/v1/video/archive',
+            { video_id : id, name : title }
+        );
+
         history.unshift({
             id: id,
             title: title
         });
+
         return history;
     };
 
     this.deleteVideo = function (list, id) {
+        if (list == 'upcoming') {
+            console.log($http.delete(
+                '/v1/video/delete/' + id
+            ));
+        }
+
         for (var i = lists[list].length - 1; i >= 0; i--) {
             if (lists[list][i].id === id) {
                 lists[list].splice(i, 1);
@@ -198,6 +221,45 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', function
         return history;
     };
 
+    this.startPolling = function () {
+        service.pollServer();
+    };
+
+    this.pollServer = function () {
+        //$log.info('Polling server');
+
+        $http.get('/v1/video/update').then(
+            function success(response) {
+                var updateUpcoming = response.data.payload.upcoming;
+                var updateHistory  = response.data.payload.history;
+
+                upcoming.empty();
+
+                for(var i = 0; i < updateUpcoming.length; i++) {
+                    upcoming.push({
+                        id: updateUpcoming[i].video_id,
+                        title: updateUpcoming[i].name
+                    });
+                }
+
+                history.empty();
+
+                for(var i = 0; i < updateHistory.length; i++) {
+                    history.push({
+                        id: updateHistory[i].video_id,
+                        title: updateHistory[i].name
+                    });
+                }
+
+                setTimeout(service.pollServer, 1000);
+            },
+            function failure(response) {
+                $log.error(response);
+                $timeout(service.pollServer(), 5000)
+            }
+        );
+    }
+
 }]);
 
 // Controller
@@ -212,6 +274,8 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
         $scope.upcoming = VideosService.getUpcoming();
         $scope.history = VideosService.getHistory();
         $scope.playlist = true;
+
+        VideosService.startPolling();
     }
 
     $scope.launch = function (id, title) {
@@ -222,7 +286,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     };
 
     $scope.queue = function (id, title) {
-        VideosService.queueVideo(id, title);
+        VideosService.queueVideo(id, title, true);
         VideosService.deleteVideo($scope.history, id);
         $log.info('Queued id:' + id + ' and title:' + title);
     };
@@ -249,9 +313,9 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
             .error( function () {
                 $log.info('Search error');
             });
-    }
+    };
 
     $scope.tabulate = function (state) {
         $scope.playlist = state;
-    }
+    };
 });
