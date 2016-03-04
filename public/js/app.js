@@ -21,6 +21,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
 
     var service = this;
     var isCastEnabled;
+    var castSession = null;
+    var castMedia = null;
 
     var youtube = {
         ready: false,
@@ -57,30 +59,62 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
         var sessionRequest = new chrome.cast.SessionRequest(chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID);
         var apiConfig = new chrome.cast.ApiConfig(sessionRequest, service.sessionListener, service.receiverListener);
         chrome.cast.initialize(apiConfig, service.onInitSuccess, service.onError);
-    }
+    };
 
     this.receiverListener = function (e) {
         if( e === chrome.cast.ReceiverAvailability.AVAILABLE) {
             $log.info("Chromecast status: " + e);
             $rootScope.castSupport = true;
         }
-    }
+    };
 
     this.sessionListener = function (e) {
-        $log.debug("Session listener: " + e);
-    }
+        castSession = e;
+
+        if (castSession.media.length != 0) {
+            onMediaDiscovered('onRequestSessionSuccess', castSession.media[0]);
+        }
+    };
 
     this.onInitSuccess = function (e) {
         $log.info("Google Cast API is ready");
 
-        //castSession = chrome.cast.Session;
-
-        //console.log(castSession);
-    }
+        castSession = chrome.cast.Session;
+    };
 
     this.onError = function (e) {
         $log.error(e);
-    }
+    };
+
+    this.onSuccess = function (e) {
+        $log.info(e);
+    };
+
+    this.startCast = function () {
+        if (typeof upcoming[0] != 'undefined') {
+            var mediaInfo = new chrome.cast.media.MediaInfo("https://youtube.com/watch?=" + upcoming[0].id);
+            var request = new chrome.cast.media.LoadRequest(mediaInfo);
+            castSession.loadMedia(request, service.onMediaDiscovered.bind(this, 'loadMedia'), service.onMediaError);
+
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    this.onMediaDiscovered = function(how, media) {
+        castMedia = media;
+
+        castMedia.play();
+    };
+
+    this.onMediaError = function(e) {
+        $log.error(e);
+    };
+
+    this.stopCast = function () {
+        castSession.stop(service.onSuccess, service.onError)
+    };
 
     $window.onYouTubeIframeAPIReady = function () {
         $log.info('Youtube API is ready');
@@ -148,8 +182,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     this.unloadPlayer = function () {
         if (youtube.ready && youtube.playerId) {
             if (youtube.player) {
-                $log.debug(youtube.player);
-
                 youtube.player.destroy();
             }
         }
@@ -337,6 +369,11 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
         $log.info('Starting cast...');
         $scope.stream = {mode: 'cast'};
         $scope.streaming = true;
+
+        if (VideosService.startCast() == false) {
+            alert('Please add videos to the playlist before casting');
+            this.stopStream();
+        }
     };
 
     $scope.startHost = function () {
@@ -351,6 +388,8 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     $scope.stopStream = function () {
         if ($scope.stream.mode == 'cast') {
             $log.info('Stopping cast...');
+
+            VideosService.stopCast();
         } else if ($scope.stream.mode == 'host') {
             $log.info('Stopping host mode...');
 
