@@ -39,18 +39,15 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     lists['upcoming'] = upcoming;
     lists['history'] = history;
 
-    var stream = { mode: 'unset'};
+    var stream = { mode: 'unset' };
 
     $window.onYouTubeIframeAPIReady = function () {
         $log.info('Youtube API is ready');
         youtube.ready = true;
-        service.bindPlayer('placeholder');
-        service.loadPlayer();
-
         $rootScope.$apply();
     };
 
-    function onYoutubeReady (event) {
+    function onYoutubeReady () {
         $log.info('YouTube Player is ready');
 
         if (typeof upcoming[0] != 'undefined')
@@ -99,10 +96,17 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
 
     this.loadPlayer = function () {
         if (youtube.ready && youtube.playerId) {
+            youtube.player = service.createPlayer();
+        }
+    };
+
+    this.unloadPlayer = function () {
+        if (youtube.ready && youtube.playerId) {
             if (youtube.player) {
+                $log.debug(youtube.player);
+
                 youtube.player.destroy();
             }
-            youtube.player = service.createPlayer();
         }
     };
 
@@ -288,15 +292,21 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
         $log.info('Entering host mode...');
         $scope.stream = {mode: 'host'};
         $scope.streaming = true;
+
+        VideosService.bindPlayer('placeholder');
+        VideosService.loadPlayer();
     };
 
     $scope.stopStream = function () {
-        if ($scope.stream.mode == 'cast')
+        if ($scope.stream.mode == 'cast') {
             $log.info('Stopping cast...');
-        else if ($scope.stream.mode == 'host')
+        } else if ($scope.stream.mode == 'host') {
             $log.info('Stopping host mode...');
-        else
+
+            VideosService.unloadPlayer();
+        } else {
             $log.info('Can\'t stop stream: unknown stream type');
+        }
 
         if ($scope.streaming == true) {
             $scope.stream = {mode: 'unset'};
