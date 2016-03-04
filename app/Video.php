@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 use DB;
@@ -21,7 +22,8 @@ class Video extends Model {
     {
         return DB::table('upcoming')->insert([
             'video_id'  => $video_id,
-            'name'      => $name
+            'name'      => $name,
+            'created_at'=> Carbon::now()
         ]);
     }
 
@@ -37,7 +39,8 @@ class Video extends Model {
 
         DB::table('history')->insert([
             'video_id'  => $video->video_id,
-            'name'      => $video->name
+            'name'      => $video->name,
+            'created_at'=> Carbon::now()
         ]);
 
         DB::table('upcoming')->delete($video->id);
