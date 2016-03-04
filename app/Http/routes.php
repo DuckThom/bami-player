@@ -16,6 +16,7 @@ Route::group(['prefix' => 'v1'], function() {
         Route::get('update', 'VideoController@update');
 
         Route::put('store', 'VideoController@store');
+        Route::put('archive', 'VideoController@archive');
 
         Route::delete('delete/{video_id}', 'VideoController@delete');
     });

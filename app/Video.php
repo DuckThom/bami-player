@@ -8,6 +8,8 @@ class Video extends Model {
 
     protected $guarded = ['id'];
 
+    protected $dates = ['created_at', 'updated_at'];
+
     /**
      * Add a video to the list of upcoming videos
      *
@@ -29,18 +31,16 @@ class Video extends Model {
      * @param $video_id
      * @return mixed
      */
-    public static function setHistory($video_id)
+    public static function archive($video_id)
     {
-        $video = DB::table('upcoming')->where('video_id', $video_id);
+        $video = DB::table('upcoming')->where('video_id', $video_id)->first();
 
-        $history = DB::table('history')->insert([
+        DB::table('history')->insert([
             'video_id'  => $video->video_id,
             'name'      => $video->name
         ]);
 
-        $video->destroy();
-
-        return $history;
+        DB::table('upcoming')->delete($video->id);
     }
 
     /**

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Bami Player</title>
-    <meta name="author" content="J. Thomas">
+    <meta name="author" content="Thomas Wiringa">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/css/style.css" type="text/css">
@@ -42,7 +42,6 @@
     </ol>
     <ol id="history" data-ng-hide="playlist">
         <li data-ng-repeat="video in history">
-            <p class="item-delete" data-ng-click="delete('history', video.id)">delete</p>
             <p class="item-title" data-ng-click="queue(video.id, video.title)">{{video.title}}</p>
         </li>
     </ol>
@@ -52,10 +51,11 @@
     </p>
 </div>
 <footer>
-    <em>Concept &amp; Design: <a href="http://jgthms.com">J. Thomas</a></em>
+    <em>Concept &amp; Design: <a href="http://lunamoonfang.nl">T. Wiringa</a></em>
     Built with <a href="http://angularjs.org/">AngularJS</a>. Source code available on <a href="https://github.com/jgthms/juketube">GitHub</a>.
 </footer>
 <script src="/js/angular.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
 <script src="/js/app.js"></script>
 </body>
 </html>

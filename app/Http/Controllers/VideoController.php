@@ -40,7 +40,35 @@ class VideoController extends Controller
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => 'Video is already in the playlist'
-                ], 400);
+                ], 208);
+
+        } else
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => $validator->errors()
+            ], 400);
+    }
+
+    public function archive(Request $request)
+    {
+        $validator = \Validator::make($request->all(), [
+            'video_id'  => 'required',
+        ]);
+
+        if ($validator->passes()) {
+            if (Video::isUpcoming($request->get('video_id')))
+            {
+                Video::archive($request->get('video_id'));
+
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => 'Video has been moved to the history'
+                ]);
+            } else
+                return response()->json([
+                    'status'    => 'failed',
+                    'message'   => 'Video is not in the upcoming playlist'
+                ], 404);
 
         } else
             return response()->json([
@@ -64,7 +92,7 @@ class VideoController extends Controller
                 return response()->json([
                     'status'    => 'failed',
                     'message'   => 'Video was not found in the upcoming playlist'
-                ]);
+                ], 404);
         } else
             return response()->json([
                 'status'    => 'failed',

@@ -35,36 +35,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     var upcoming = [];
     var history = [];
 
-    $http.get('/v1/video/get/upcoming').then(
-        function success(response) {
-            var data = response.data.payload;
-            for(var i = 0; i < data.length; i++) {
-                upcoming.push({
-                    id: data[i].video_id,
-                    title: data[i].name
-                });
-            }
-        },
-        function failure(response) {
-            $log.error(response);
-        }
-    );
-
-    $http.get('/v1/video/get/history').then(
-        function success(response) {
-            var data = response.data.payload;
-            for(var i = 0; i < data.length; i++) {
-                history.push({
-                    id: data[i].video_id,
-                    title: data[i].name
-                });
-            }
-        },
-        function failure(response) {
-            $log.error(response);
-        }
-    );
-
     var lists = [];
     lists['upcoming'] = upcoming;
     lists['history'] = history;
@@ -83,9 +53,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
 
         if (typeof upcoming[0] != 'undefined')
         {
-            service.archiveVideo(upcoming[0].id, upcoming[0].title);
             service.launchPlayer(upcoming[0].id, upcoming[0].title);
-            service.deleteVideo('upcoming', upcoming[0].id);
+            service.archiveVideo(upcoming[0].id, upcoming[0].title);
         }
     }
 
@@ -96,9 +65,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
             youtube.state = 'paused';
         } else if (event.data == YT.PlayerState.ENDED) {
             youtube.state = 'ended';
-            service.archiveVideo(upcoming[0].id, upcoming[0].title);
             service.launchPlayer(upcoming[0].id, upcoming[0].title);
-            service.deleteVideo('upcoming', upcoming[0].id);
+            service.archiveVideo(upcoming[0].id, upcoming[0].title);
         }
         $rootScope.$apply();
     }
@@ -168,40 +136,24 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
             );
         }
 
-        upcoming.push({
-            id: id,
-            title: title
-        });
-
-        return upcoming;
+        if (youtube.player.videoId == 'S5PvBzDlZGs') {
+            service.launchPlayer(upcoming[0].id, upcoming[0].name);
+        }
     };
 
     this.archiveVideo = function (id, title) {
+        $log.info('Archiving video: ' + title);
         $http.put(
             '/v1/video/archive',
             { video_id : id, name : title }
         );
-
-        history.unshift({
-            id: id,
-            title: title
-        });
-
-        return history;
     };
 
     this.deleteVideo = function (list, id) {
         if (list == 'upcoming') {
-            console.log($http.delete(
+            $http.delete(
                 '/v1/video/delete/' + id
-            ));
-        }
-
-        for (var i = lists[list].length - 1; i >= 0; i--) {
-            if (lists[list][i].id === id) {
-                lists[list].splice(i, 1);
-                break;
-            }
+            );
         }
     };
 
@@ -233,7 +185,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 var updateUpcoming = response.data.payload.upcoming;
                 var updateHistory  = response.data.payload.history;
 
-                upcoming.empty();
+                if (upcoming.length > 0)
+                    upcoming.splice(0,upcoming.length);
 
                 for(var i = 0; i < updateUpcoming.length; i++) {
                     upcoming.push({
@@ -242,7 +195,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                     });
                 }
 
-                history.empty();
+                if (history.length > 0)
+                    history.splice(0,history.length);
 
                 for(var i = 0; i < updateHistory.length; i++) {
                     history.push({
@@ -251,11 +205,11 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                     });
                 }
 
-                setTimeout(service.pollServer, 1000);
+                $timeout(service.pollServer, 1000);
             },
             function failure(response) {
                 $log.error(response);
-                $timeout(service.pollServer(), 5000)
+                $timeout(service.pollServer, 5000)
             }
         );
     }
@@ -281,13 +235,12 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     $scope.launch = function (id, title) {
         VideosService.launchPlayer(id, title);
         VideosService.archiveVideo(id, title);
-        VideosService.deleteVideo($scope.upcoming, id);
         $log.info('Launched id:' + id + ' and title:' + title);
     };
 
     $scope.queue = function (id, title) {
         VideosService.queueVideo(id, title, true);
-        VideosService.deleteVideo($scope.history, id);
+        VideosService.deleteVideo('history', id);
         $log.info('Queued id:' + id + ' and title:' + title);
     };
 
