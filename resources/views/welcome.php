@@ -19,8 +19,7 @@
         </form>
 
         <nav ng-hide="streaming">
-            <a id="cast" data-ng-click="startCast()">Cast</a>
-            -
+            <a id="cast" data-ng-click="startCast()" ng-show="castSupport">Cast</a>
             <a id="play" data-ng-click="startHost()">Host</a>
         </nav>
 
@@ -44,7 +43,8 @@
                 <h3>To start playing videos click on:</h3>
 
                 <ul>
-                    <li><b data-ng-click="startCast()">Cast</b> - to cast to a Cast enabled device</li>
+                    <li ng-hide="castSupport">Google Cast extension not found.</li>
+                    <li ng-show="castSupport"><b data-ng-click="startCast()">Cast</b> - to cast to a Cast enabled device</li>
                     <li><b data-ng-click="startHost()">Host</b> - to play the playlist locally</li>
                 </ul>
             </div>

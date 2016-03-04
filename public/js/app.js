@@ -20,6 +20,7 @@ app.config( function ($httpProvider) {
 app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeout', function ($window, $rootScope, $log, $http, $timeout) {
 
     var service = this;
+    var isCastEnabled;
 
     var youtube = {
         ready: false,
@@ -31,6 +32,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
         playerWidth: '640',
         state: 'stopped'
     };
+
     var results = [];
     var upcoming = [];
     var history = [];
@@ -40,6 +42,45 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     lists['history'] = history;
 
     var stream = { mode: 'unset' };
+
+    $window.__onGCastApiAvailable = function(loaded, errorInfo) {
+        if (loaded) {
+            service.initializeCastApi();
+        } else {
+            isCastEnabled = false;
+        }
+    };
+
+    this.initializeCastApi = function () {
+        isCastEnabled = true;
+
+        var sessionRequest = new chrome.cast.SessionRequest(chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID);
+        var apiConfig = new chrome.cast.ApiConfig(sessionRequest, service.sessionListener, service.receiverListener);
+        chrome.cast.initialize(apiConfig, service.onInitSuccess, service.onError);
+    }
+
+    this.receiverListener = function (e) {
+        if( e === chrome.cast.ReceiverAvailability.AVAILABLE) {
+            $log.info("Chromecast status: " + e);
+            $rootScope.castSupport = true;
+        }
+    }
+
+    this.sessionListener = function (e) {
+        $log.debug("Session listener: " + e);
+    }
+
+    this.onInitSuccess = function (e) {
+        $log.info("Google Cast API is ready");
+
+        //castSession = chrome.cast.Session;
+
+        //console.log(castSession);
+    }
+
+    this.onError = function (e) {
+        $log.error(e);
+    }
 
     $window.onYouTubeIframeAPIReady = function () {
         $log.info('Youtube API is ready');
@@ -94,6 +135,10 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
         });
     };
 
+    this.checkCastSupport = function () {
+        return isCastEnabled;
+    };
+
     this.loadPlayer = function () {
         if (youtube.ready && youtube.playerId) {
             youtube.player = service.createPlayer();
@@ -111,13 +156,16 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     };
 
     this.launchPlayer = function (id, title) {
-        youtube.player.loadVideoById(id);
-        youtube.videoId = id;
-        youtube.videoTitle = title;
+        if (youtube.player != null) {
+            youtube.player.loadVideoById(id);
+            youtube.videoId = id;
+            youtube.videoTitle = title;
 
-        youtube.player.playVideo();
+            youtube.player.playVideo();
 
-        return youtube;
+            return youtube;
+        } else
+            return false;
     };
 
     this.listResults = function (data) {
@@ -137,7 +185,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     };
 
     this.queueVideo = function (id, title, save) {
-        if (youtube.videoId == null) {
+        if (youtube.videoId == null && youtube.player != null) {
             $log.info('Skipping default video');
             service.launchPlayer(id, title);
         } else {
@@ -239,7 +287,10 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
         $scope.playlist = true;
         $scope.streaming = false;
 
-        VideosService.startPolling();
+        setTimeout(VideosService.startPolling, 1000);
+        setTimeout(function() {
+            $scope.castSupport = VideosService.checkCastSupport();
+        }, 500);
     }
 
     $scope.launch = function (id, title) {
