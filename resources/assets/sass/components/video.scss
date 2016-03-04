@@ -1,0 +1,39 @@
+.video {
+  cursor: pointer;
+  min-height: 90px;
+  padding: 10px;
+  padding-left: 140px;
+  position: relative;
+}
+
+.video:nth-child(2n-1) {
+  background: white;
+}
+
+.video-image {
+  float: left;
+  left: 10px;
+  position: absolute;
+  top: 10px;
+}
+
+.video-title {
+  padding-top: 5px;
+}
+
+.video-author {
+  color: #df1f1f;
+  font-size: 14px;
+  padding: 5px 0;
+}
+
+.video-description {
+  color: #727785;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.video:hover {
+  background: #22242a;
+  color: white;
+}

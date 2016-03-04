@@ -28,6 +28,7 @@ class VideoController extends Controller
         ]);
 
         if ($validator->passes()) {
+            if ($request->get('name'))
             if (!Video::isUpcoming($request->get('video_id')))
             {
                 Video::setUpcoming($request->get('name'), $request->get('video_id'));

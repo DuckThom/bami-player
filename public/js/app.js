@@ -1,4 +1,4 @@
-var app = angular.module('JukeTubeApp', []);
+var app = angular.module('BamiPlayerApp', []);
 
 // Run
 
@@ -38,6 +38,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     var lists = [];
     lists['upcoming'] = upcoming;
     lists['history'] = history;
+
+    var stream = { mode: 'unset'};
 
     $window.onYouTubeIframeAPIReady = function () {
         $log.info('Youtube API is ready');
@@ -109,6 +111,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
         youtube.videoId = id;
         youtube.videoTitle = title;
 
+        youtube.player.playVideo();
+
         return youtube;
     };
 
@@ -129,15 +133,16 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     };
 
     this.queueVideo = function (id, title, save) {
-        if (save) {
-            $http.put(
-                '/v1/video/store',
-                {video_id: id, name: title}
-            );
-        }
-
-        if (youtube.player.videoId == 'S5PvBzDlZGs') {
-            service.launchPlayer(upcoming[0].id, upcoming[0].name);
+        if (youtube.videoId == null) {
+            $log.info('Skipping default video');
+            service.launchPlayer(id, title);
+        } else {
+            if (save) {
+                $http.put(
+                    '/v1/video/store',
+                    {video_id: id, name: title}
+                );
+            }
         }
     };
 
@@ -212,7 +217,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 $timeout(service.pollServer, 5000)
             }
         );
-    }
+    };
 
 }]);
 
@@ -228,6 +233,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
         $scope.upcoming = VideosService.getUpcoming();
         $scope.history = VideosService.getHistory();
         $scope.playlist = true;
+        $scope.streaming = false;
 
         VideosService.startPolling();
     }
@@ -270,5 +276,31 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
 
     $scope.tabulate = function (state) {
         $scope.playlist = state;
+    };
+
+    $scope.startCast = function () {
+        $log.info('Starting cast...');
+        $scope.stream = {mode: 'cast'};
+        $scope.streaming = true;
+    };
+
+    $scope.startHost = function () {
+        $log.info('Entering host mode...');
+        $scope.stream = {mode: 'host'};
+        $scope.streaming = true;
+    };
+
+    $scope.stopStream = function () {
+        if ($scope.stream.mode == 'cast')
+            $log.info('Stopping cast...');
+        else if ($scope.stream.mode == 'host')
+            $log.info('Stopping host mode...');
+        else
+            $log.info('Can\'t stop stream: unknown stream type');
+
+        if ($scope.streaming == true) {
+            $scope.stream = {mode: 'unset'};
+            $scope.streaming = false;
+        }
     };
 });

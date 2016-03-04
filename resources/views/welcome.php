@@ -1,12 +1,11 @@
-<!doctype html>
-<html data-ng-app="JukeTubeApp">
+<!DOCTYPE html>
+<html data-ng-app="BamiPlayerApp">
 <head>
     <meta charset="utf-8">
     <title>Bami Player</title>
     <meta name="author" content="Thomas Wiringa">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link rel="stylesheet" href="/css/app.css" type="text/css">
     <link rel="icon" href="/favicon.ico">
 </head>
 <body data-ng-controller="VideosController">
@@ -16,9 +15,13 @@
         <input id="query" name="q" type="text" placeholder="Search for a YouTube video" data-ng-model="query">
         <input id="submit" type="image" src="/img/search.png" alt="Search">
     </form>
-    <nav>
-        <a id="play">{{ youtube.state }}</a>
-        <a id="pause">Pause</a>
+    <nav ng-hide="streaming">
+        <a id="cast" data-ng-click="startCast()">Cast</a>
+        -
+        <a id="play" data-ng-click="startHost()">Host</a>
+    </nav>
+    <nav ng-show="streaming">
+        <a id="stop" data-ng-click="stopStream()">Stop {{ stream.mode }}ing</a></a>
     </nav>
 </header>
 <div id="results">
@@ -52,7 +55,7 @@
 </div>
 <footer>
     <em>Concept &amp; Design: <a href="http://lunamoonfang.nl">T. Wiringa</a></em>
-    Built with <a href="http://angularjs.org/">AngularJS</a>. Source code available on <a href="https://github.com/jgthms/juketube">GitHub</a>.
+    Built with <a href="http://angularjs.org/">AngularJS</a>. Source code available on <a href="https://github.com/DuckThom/bami-player">GitHub</a>.
 </footer>
 <script src="/js/angular.min.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>

@@ -1,0 +1,19 @@
+footer {
+  color: #888;
+  font-size: 16px;
+  padding: 20px 0;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+
+  em {
+    float: right;
+    font-style: normal;
+  }
+
+  a {
+    color: #666;
+
+    &:hover {
+      color: #444;
+    }
+  }
+}

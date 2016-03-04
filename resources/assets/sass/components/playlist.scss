@@ -1,0 +1,76 @@
+#player, #playlist {
+  background: white;
+  height: 480px;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 80px;
+  width: 640px;
+}
+
+#playlist {
+  background: #22242a;
+  color: #727785;
+  font-size: 16px;
+  height: 464px;
+  overflow-x: hidden;
+  top: 560px;
+  width: 640px;
+}
+
+#current {
+  color: white;
+  font-size: 20px;
+  padding: 20px;
+}
+
+#playlist ol, #playlist li {
+  cursor: pointer;
+}
+
+#playlist ol {
+  border-bottom: 1px solid #33363f;
+  height: 340px;
+  overflow-x: hidden;
+}
+
+#playlist li {
+  border-top: 1px solid #33363f;
+  cursor: pointer;
+}
+
+#history li {
+  color: #33522d;
+}
+
+.item-title {
+  margin-right: 80px;
+  padding: 10px 20px;
+}
+
+.item-title:hover {
+  background: #1171A2;
+  color: white;
+}
+
+.item-delete {
+  color: #ac0809;
+  float: right;
+  text-align: center;
+  padding: 10px 0;
+  width: 80px;
+}
+
+.item-delete:hover {
+  background: #ac0809;
+  color: white;
+}
+
+#history .item-title:hover {
+  background: #33522d;
+  color: white;
+}
+
+#player {
+  background: black;
+}
