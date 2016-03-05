@@ -5763,13 +5763,14 @@ button.close {
     border: none;
     width: 650px;
     background-color: #303F9F;
-    color: #7986CB; }
+    color: #7986CB;
+    margin-top: 1px; }
   .navbar-bamiplayer .navbar-form button {
     border-radius: 0 20px 20px 0;
     border: none;
     padding-top: 7px;
     padding-bottom: 7px;
-    margin-top: 1px;
+    margin-top: 3px;
     margin-left: -5px;
     background-color: #303F9F;
     color: #7986CB; }
@@ -5794,6 +5795,13 @@ button.close {
   height: 944px;
   margin-top: -20px;
   overflow-y: scroll; }
+  .results .search-instructions {
+    margin-top: 100px;
+    padding: 0 40px;
+    letter-spacing: 1px;
+    text-align: center; }
+    .results .search-instructions h4 {
+      line-height: 2; }
 
 .player {
   background: black;

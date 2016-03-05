@@ -23,6 +23,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     var isCastEnabled;
     var castSession = null;
     var castMedia = null;
+    var searched = false;
 
     var youtube = {
         ready: false,
@@ -359,6 +360,8 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     };
 
     $scope.search = function () {
+        $scope.searched = true;
+
         $http.get('https://www.googleapis.com/youtube/v3/search', {
                 params: {
                     key: 'AIzaSyANLGjM3FH5DsqkkLHFO_K5QOb5SdF47qk',

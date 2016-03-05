@@ -3,6 +3,17 @@
   height: 944px;
   margin-top: -20px;
   overflow-y: scroll;
+
+  .search-instructions {
+    margin-top: 100px;
+    padding: 0 40px;
+    letter-spacing: 1px;
+    text-align: center;
+
+    h4 {
+      line-height: 2;
+    }
+  }
 }
 
 .player {

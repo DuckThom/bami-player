@@ -55,11 +55,15 @@
                 <div class="row">
                     <div class="col-md-6 no-pad-right">
                         <div class="results">
-                            <div class="video" data-ng-repeat="video in results" data-ng-click="queue(video.id, video.title)">
+                            <div class="video" ng-show="searched" ng-repeat="video in results" ng-click="queue(video.id, video.title)">
                                 <img class="video-image" data-ng-src="{{ video.thumbnail }}">
                                 <p class="video-title">{{ video.title }}</p>
                                 <p class="video-author">{{ video.author }}</p>
                                 <p class="video-description">{{ video.description }}</p>
+                            </div>
+
+                            <div class="search-instructions" ng-hide="searched">
+                                <h4>Search for videos by filling out the search box<br /> and pressing Submit/Enter</h4>
                             </div>
                         </div>
                     </div>
@@ -122,8 +126,8 @@
             </footer>
         </div>
 
-        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
         <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
 
         <script src="/js/angular.min.js"></script>
