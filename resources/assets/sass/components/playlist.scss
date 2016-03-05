@@ -1,5 +1,4 @@
 #player, #playlist {
-  background: white;
   height: 480px;
   overflow: hidden;
   position: absolute;
@@ -9,13 +8,57 @@
 }
 
 #playlist {
-  background: #22242a;
-  color: #727785;
+  background: $deep-orange-base;
+  color: $deep-orange-text;
   font-size: 16px;
   height: 464px;
   overflow-x: hidden;
   top: 560px;
   width: 640px;
+
+  ol {
+    border-bottom: 1px solid $deep-orange-dark;
+    height: 340px;
+    overflow-x: hidden;
+    cursor: pointer;
+  }
+
+  li {
+    border-top: 1px solid $deep-orange-dark;
+    cursor: pointer;
+
+    &:hover {
+      background: $deep-orange-dark;
+    }
+  }
+}
+
+#tabs, #tabs a {
+  background: $deep-orange-base;
+  height: 64px;
+  left: 0;
+  line-height: 64px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+
+#tabs {
+  bottom: 0;
+
+  a {
+    color: $deep-orange-light;
+    width: 50%;
+
+    &:last-child {
+      left: 50%;
+    }
+  }
+
+  .on {
+    background: $deep-orange-dark;
+    color: white;
+  }
 }
 
 #current {
@@ -24,33 +67,14 @@
   padding: 20px;
 }
 
-#playlist ol, #playlist li {
-  cursor: pointer;
-}
-
-#playlist ol {
-  border-bottom: 1px solid #33363f;
-  height: 340px;
-  overflow-x: hidden;
-}
-
-#playlist li {
-  border-top: 1px solid #33363f;
-  cursor: pointer;
-}
-
 #history li {
   color: #33522d;
+  width: 100%;
 }
 
 .item-title {
   margin-right: 80px;
   padding: 10px 20px;
-}
-
-.item-title:hover {
-  background: #1171A2;
-  color: white;
 }
 
 .item-delete {
@@ -59,16 +83,11 @@
   text-align: center;
   padding: 10px 0;
   width: 80px;
-}
 
-.item-delete:hover {
-  background: #ac0809;
-  color: white;
-}
-
-#history .item-title:hover {
-  background: #33522d;
-  color: white;
+  &:hover {
+    background: #ac0809;
+    color: white;
+  }
 }
 
 #player {

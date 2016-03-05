@@ -18,7 +18,7 @@
 }
 
 .video-title {
-  padding-top: 5px;
+  margin: 0;
 }
 
 .video-author {
@@ -36,26 +36,4 @@
 .video:hover {
   background: #22242a;
   color: white;
-}
-
-.player-instructions {
-  text-align: center;
-  margin-top: 100px;
-  color: $blue-grey-light;
-
-  ul {
-    padding-top: 20px;
-    list-style-type: none;
-
-    li {
-      padding: 20px;
-    }
-
-    b {
-      background: rgba(255,255,255,0.4);
-      padding: 7px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
-  }
 }

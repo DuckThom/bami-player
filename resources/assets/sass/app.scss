@@ -1,18 +1,20 @@
-// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "https://fonts.googleapis.com/css?family=Montserrat";
 
 @import "components/variables";
 
-@import "components/elements";
-@import "components/header";
+@import "components/navbar";
+@import "components/blocks";
 @import "components/video";
-@import "components/tabs";
-@import "components/playlist";
 @import "components/footer";
 
-:-ms-input-placeholder,
-:-moz-placeholder,
-::-webkit-input-placeholder,
-::-moz-placeholder {
-  color: $indigo-light;
+body, html {
+  font-family: 'Montserrat', sans-serif;
+  background: url('/img/shattered.png');
+  padding-bottom: 50px;
+}
+
+.col-md-6,
+.col-xs-6 {
+  padding: 0 !important;
 }

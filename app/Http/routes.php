@@ -35,6 +35,10 @@ Route::group(['prefix' => 'v1'], function() {
 
 Route::group(['middleware' => ['web']], function () {
     Route::get('/', function () {
-        return view('welcome');
+        return view('index');
+    });
+
+    Route::get('receiver', function () {
+        return view('receiver');
     });
 });

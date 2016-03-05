@@ -1,0 +1,100 @@
+.results {
+  background-color: white;
+  height: 944px;
+  margin-top: -20px;
+  overflow-y: scroll;
+}
+
+.player {
+  background: black;
+  height: 480px;
+  overflow: hidden;
+  margin-top: -20px;
+
+  iframe {
+    width: 100%;
+  }
+
+  .player-instructions {
+    text-align: center;
+    margin-top: 100px;
+    color: $blue-grey-light;
+
+    ul {
+      padding-top: 20px;
+      list-style-type: none;
+
+      li {
+        padding: 20px;
+      }
+
+      b {
+        background: rgba(255,255,255,0.4);
+        padding: 7px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.playlist {
+  background: $deep-orange-base;
+  color: $deep-orange-text;
+  font-size: 16px;
+  height: 464px;
+  overflow-x: hidden;
+  position: relative;
+
+  ol {
+    list-style: none;
+    border-bottom: 1px solid $deep-orange-dark;
+    height: 340px;
+    overflow-x: hidden;
+    cursor: pointer;
+    padding-left: 0;
+  }
+
+  tr {
+    td {
+      border-top: 0 !important;
+    }
+
+    .remove-item:hover {
+      background-color: rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    &:hover {
+      background-color: $deep-orange-dark;
+    }
+  }
+}
+
+.tabs {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .tab-btn {
+    text-align: center;
+    background-color: $deep-orange-dark;
+    color: white;
+    width: 100%;
+    padding: 20px 0;
+    display: block;
+  }
+}
+
+#current {
+  color: white;
+  font-size: 20px;
+  padding: 20px;
+  min-height: 68px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}

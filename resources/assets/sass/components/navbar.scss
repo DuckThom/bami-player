@@ -1,0 +1,57 @@
+.navbar-bamiplayer {
+  background-color: $indigo-base;
+  border-radius: 0 !important;
+  padding: 20px 0;
+  line-height: 40px;
+
+  .navbar-text {
+    color: white;
+    font-size: 25px;
+  }
+
+  .navbar-form {
+    .form-control {
+      border-radius: 20px 0 0 20px;
+      border: none;
+      width: 650px;
+      background-color: $indigo-dark;
+      color: $indigo-light;
+    }
+
+    button {
+      border-radius: 0 20px 20px 0;
+      border: none;
+      padding-top: 7px;
+      padding-bottom: 7px;
+      margin-top: 1px;
+      margin-left: -5px;
+      background-color: $indigo-dark;
+      color: $indigo-light;
+
+      &:hover {
+        background-color: $indigo-light;
+        color: $indigo-dark;
+      }
+    }
+  }
+
+  .nav {
+    margin: 8px 0;
+    height: 40px;
+
+    a {
+      border-radius: 20px;
+      padding: 6px 20px;
+      color: white;
+
+      &:hover {
+        cursor: pointer;
+        background-color: $indigo-light;
+      }
+    }
+
+    li {
+      margin-top: 5px;
+    }
+  }
+}

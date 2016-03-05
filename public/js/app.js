@@ -80,6 +80,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
         $log.info("Google Cast API is ready");
 
         castSession = chrome.cast.Session;
+        castSession.displayName = "Bami Player";
+        $log.info(castSession);
     };
 
     this.onError = function (e) {
@@ -92,9 +94,24 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
 
     this.startCast = function () {
         if (typeof upcoming[0] != 'undefined') {
-            var mediaInfo = new chrome.cast.media.MediaInfo("https://youtube.com/watch?=" + upcoming[0].id);
+            var mediaInfo = new chrome.cast.media.MediaInfo("https://r20---sn-5hnednl7.googlevideo.com/videoplayback\?dur\=313.161\&key\=yt6\&lmt\=1456950795983922\&fexp\=9405981%2C9406819%2C9416126%2C9420452%2C9421979%2C9422342%2C9422596%2C9423340%2C9423661%2C9423662%2C9423749%2C9425283%2C9426150%2C9427600%2C9427678%2C9428656%2C9428990%2C9429236%2C9431244\&gcr\=nl\&initcwndbps\=992500\&ipbits\=0\&id\=o-AI1nl8S920F0jtr-sXSVT9lERVjFwYUAgE6w5CjxrfOO\&keepalive\=yes\&sver\=3\&sparams\=clen%2Cdur%2Cgcr%2Cgir%2Cid%2Cinitcwndbps%2Cip%2Cipbits%2Citag%2Ckeepalive%2Clmt%2Cmime%2Cmm%2Cmn%2Cms%2Cmv%2Cnh%2Cpl%2Crequiressl%2Csource%2Cupn%2Cexpire\&gir\=yes\&upn\=tlZSS3IJmUw\&ms\=au\&ip\=94.212.83.183\&pl\=15\&itag\=251\&mv\=m\&expire\=1457154871\&mm\=31\&mt\=1457133178\&clen\=5049995\&mime\=audio%2Fwebm\&requiressl\=yes\&nh\=IgpwZjAxLmFtczE1Kg4yMTMuNTEuMTU2LjIxMw\&source\=youtube\&mn\=sn-5hnednl7\&signature\=DD0325631A1FAC6F787C0FF74EE1504C7B5BEAA5.CC49E5BEF254A2E50D5E68748F4DC2DAFD28A9DC\&ratebypass\=yes", 'audio/webm');
             var request = new chrome.cast.media.LoadRequest(mediaInfo);
             castSession.loadMedia(request, service.onMediaDiscovered.bind(this, 'loadMedia'), service.onMediaError);
+
+            /*$http.get('/v1/video/getStreamUrl', {
+                id: upcoming[0].id
+            }).then(function success(response) {
+                    var url = response.data.payload.url;
+
+                    $log.info(url);
+
+
+                },
+                function failure(response) {
+                    $log.error(response);
+
+                    return false;
+                });*/
 
             return true;
         } else {
@@ -280,7 +297,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 for(var i = 0; i < updateUpcoming.length; i++) {
                     upcoming.push({
                         id: updateUpcoming[i].video_id,
-                        title: updateUpcoming[i].name
+                        title: (updateUpcoming[i].name.length >= 47 ? updateUpcoming[i].name.substr(0, 50) + '...' : updateUpcoming[i].name)
                     });
                 }
 
@@ -290,7 +307,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 for(var i = 0; i < updateHistory.length; i++) {
                     history.push({
                         id: updateHistory[i].video_id,
-                        title: updateHistory[i].name
+                        title: (updateHistory[i].name.length >= 47 ? updateHistory[i].name.substr(0, 50) + '...' : updateHistory[i].name)
                     });
                 }
 
@@ -349,7 +366,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
                     maxResults: '8',
                     part: 'id,snippet',
                     fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
-                    q: this.query
+                    q: $('#query').val()
                 }
             })
             .success( function (data) {

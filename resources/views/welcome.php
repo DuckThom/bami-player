@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html data-ng-app="BamiPlayerApp">
+
 <head>
     <meta charset="utf-8">
     <title>Bami Player</title>
     <meta name="author" content="Thomas Wiringa">
+    <meta name="description" content="Create and stream a YouTube playlist with ease">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/app.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
     <link rel="icon" href="/favicon.ico">
 </head>
+
 <body data-ng-controller="VideosController">
 
     <header>
@@ -57,7 +60,7 @@
         <ol id="upcoming" data-ng-show="playlist">
             <li data-ng-repeat="video in upcoming">
                 <p class="item-delete" data-ng-click="delete('upcoming', video.id)">delete</p>
-                <p class="item-title" data-ng-click="launch(video.id, video.title)">{{video.title}}</p>
+                <p class="item-title">{{video.title}}</p><!-- Disable select to play for now data-ng-click="launch(video.id, video.title)" -->
             </li>
         </ol>
 
