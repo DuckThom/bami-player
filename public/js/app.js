@@ -228,6 +228,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 description: data.items[i].snippet.description,
                 thumbnail: data.items[i].snippet.thumbnails.default.url,
                 author: data.items[i].snippet.channelTitle
+                //length:
             });
         }
 
@@ -369,6 +370,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
                     maxResults: '8',
                     part: 'id,snippet',
                     fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
+                    videoSyndicated: true, // Limit search to videos that are allowed to play outside youtube.com
                     q: $('#query').val()
                 }
             })
@@ -391,8 +393,8 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
         $scope.streaming = true;
 
         if (VideosService.startCast() == false) {
-            alert('Please add videos to the playlist before casting');
             this.stopStream();
+            alert('Please add videos to the playlist before casting');
         }
     };
 
