@@ -36,35 +36,43 @@ class HostAudioServer extends Command
      */
     public function handle()
     {
-        // Loop forever, use Ctrl-C to stop the command
-        while (true)
+        // Check if mpsyt exists
+        if (is_executable('/usr/bin/mpsyt') || is_executable('/usr/local/bin/mpsyt'))
         {
-            $this->info('Use Ctrl-C to stop the server');
-
-            // Get the upcoming list
-            $upcoming = Video::getUpcoming();
-
-            if (isset($upcoming[0]))
+            // Loop forever, use Ctrl-C to stop the command
+            while (true)
             {
-                // Show which video we are about to play
-                $this->info('Now playing: ' . $upcoming[0]->name);
+                $this->info('Use Ctrl-C to stop the server');
 
-                // Execute mps-youtube to play the video from the command line
-                exec('mpsyt playurl ' . $upcoming[0]->video_id);
+                // Get the upcoming list
+                $upcoming = Video::getUpcoming();
 
-                // Remove the video from upcoming
-                Video::archive($upcoming[0]->video_id);
+                if (isset($upcoming[0]))
+                {
+                    // Show which video we are about to play
+                    $this->info('Now playing: ' . $upcoming[0]->name);
 
-                // Sleep for 1 second
-                sleep(1);
-            } else
-            {
-                // No videos in upcoming
-                $this->info('Playlist empty... waiting 5 seconds...');
+                    // Execute mps-youtube to play the video from the command line
+                    exec('mpsyt playurl ' . $upcoming[0]->video_id);
 
-                // Sleep 5 seconds
-                sleep(5);
+                    // Remove the video from upcoming
+                    Video::archive($upcoming[0]->video_id);
+
+                    // Sleep for 1 second
+                    sleep(1);
+                } else
+                {
+                    // No videos in upcoming
+                    $this->info('Playlist empty... waiting 5 seconds...');
+
+                    // Sleep 5 seconds
+                    sleep(5);
+                }
             }
+        } else {
+            $this->error("'mpsyt' not found in /usr/bin and /usr/local/bin");
+
+            return false;
         }
     }
 }
