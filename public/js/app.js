@@ -330,9 +330,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                         title: updateHistory[i].name
                     });
                 }
-
-                if (now_playing.name != "")
-                    youtube.videoTitle = now_playing.name;
+                
+                youtube.videoTitle = now_playing.name;
 
                 $timeout(service.pollServer, 1000);
             },
@@ -344,7 +343,14 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     };
 
     this.stopPlaying = function () {
-        $http.delete('/v1/video/stop_playing');
+        $http.delete('/v1/video/stop_playing').then(
+            function success(response) {
+                console.log(response);
+            },
+            function failure(response) {
+                console.log(response);
+            }
+        );
     };
 
 }]);
