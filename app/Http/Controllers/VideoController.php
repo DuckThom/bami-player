@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Helpers\Blacklist;
 use App\Video;
 
 class VideoController extends Controller
@@ -28,20 +29,27 @@ class VideoController extends Controller
         ]);
 
         if ($validator->passes()) {
-            if ($request->get('name'))
-            if (!Video::isUpcoming($request->get('video_id')))
+            if (Blacklist::checkName($request->get('name')))
             {
-                Video::setUpcoming($request->get('name'), $request->get('video_id'));
+                if (!Video::isUpcoming($request->get('video_id')))
+                {
+                    Video::setUpcoming($request->get('name'), $request->get('video_id'));
 
-                return response()->json([
-                    'status'    => 'success',
-                    'message'   => 'Video has been added to the playlist'
-                ]);
+                    return response()->json([
+                        'status'    => 'success',
+                        'message'   => 'Video has been added to the playlist'
+                    ]);
+                } else
+                    return response()->json([
+                        'status'    => 'failed',
+                        'message'   => 'Video is already in the playlist'
+                    ], 208);
             } else
                 return response()->json([
                     'status'    => 'failed',
-                    'message'   => 'Video is already in the playlist'
-                ], 208);
+                    'message'   => "The video name contains blacklisted words"
+                ], 400);
+
 
         } else
             return response()->json([

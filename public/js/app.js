@@ -244,7 +244,9 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 $http.put(
                     '/v1/video/store',
                     {video_id: id, name: title}
-                );
+                ).then(function success(response) {
+                    console.log(response);
+                });
             }
         }
     };
@@ -347,13 +349,13 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     $scope.launch = function (id, title) {
         VideosService.launchPlayer(id, title);
         VideosService.archiveVideo(id, title);
-        $log.info('Launched id:' + id + ' and title:' + title);
+        //$log.info('Launched id:' + id + ' and title:' + title);
     };
 
     $scope.queue = function (id, title) {
         VideosService.queueVideo(id, title, true);
         VideosService.deleteVideo('history', id);
-        $log.info('Queued id:' + id + ' and title:' + title);
+        //$log.info('Queued id:' + id + ' and title:' + title);
     };
 
     $scope.delete = function (list, id) {
