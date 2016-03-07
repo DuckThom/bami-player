@@ -17,8 +17,10 @@ Route::group(['prefix' => 'v1'], function() {
 
         Route::put('store', 'VideoController@store');
         Route::put('archive', 'VideoController@archive');
+        Route::put('now_playing', 'VideoController@now_playing');
 
         Route::delete('delete/{video_id}', 'VideoController@delete');
+        Route::delete('stop_playing', 'VideoController@stop_playing');
     });
 });
 

@@ -49,6 +49,10 @@
                         </div><!-- /.navbar-collapse -->
                     </div><!-- /.container-fluid -->
                 </nav>
+
+                <div class="now-playing" ng-if="youtube.videoTitle">
+                    <h4><div class='sp sp-wave'></div> {{ youtube.videoTitle }}</h4>
+                </div>
             </header>
 
             <div class="container-fluid">
@@ -72,6 +76,8 @@
                         <div class="player">
                             <div id="placeholder">
                                 <div class="player-instructions">
+                                    <h3 ng-show="playing">This playlist is currently being hosted. Hosting is not recommended now.</h3>
+
                                     <h3>To start playing videos click on:</h3>
 
                                     <ul>
@@ -84,8 +90,6 @@
                         </div>
 
                         <div class="playlist">
-                            <p id="current">{{ youtube.videoTitle }}</p>
-
                             <table class="table" id="upcoming" ng-show="playlist">
                                 <tbody>
                                     <tr ng-repeat="video in upcoming">

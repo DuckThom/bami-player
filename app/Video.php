@@ -87,4 +87,68 @@ class Video extends Model {
         DB::table('upcoming')->where('video_id', $video_id)->delete();
     }
 
+    /**
+     * Check if a video is playing
+     *
+     * @return bool
+     */
+    public static function isPlaying()
+    {
+        if (DB::table('now_playing')->count())
+            if (Carbon::now()->diffInSeconds(Carbon::parse(DB::table('now_playing')->first()->updated_at)) < 10)
+                return true;
+            else
+                self::stopPlaying();
+
+        return false;
+    }
+
+    /**
+     * Get or set the song that's currently playing
+     *
+     * @param null $name
+     * @return mixed|static|bool
+     */
+    public static function nowPlaying($name = null)
+    {
+        if ($name === null)
+            return self::isPlaying() ? DB::table('now_playing')->first() : false;
+        else {
+            if (DB::table('now_playing')->count()) {
+                $now_playing = DB::table('now_playing')->where('id', 1)->update([
+                    'name'       => $name,
+                    'updated_at' => Carbon::now()
+                ]);
+            } else {
+                $now_playing = DB::table('now_playing')->insert([
+                    'name'       => $name,
+                    'updated_at' => Carbon::now()
+                ]);
+            }
+
+            return $now_playing;
+        }
+    }
+
+    /**
+     * Update the updated_at column of the now playing song
+     * to indicate that it's still playing
+     */
+    public static function stillPlaying()
+    {
+        DB::table('now_playing')->where('id', 1)->update([
+            'updated_at' => Carbon::now()
+        ]);
+    }
+
+    /**
+     * Remove the song from the currently playing list
+     */
+    public static function stopPlaying()
+    {
+        DB::table('now_playing')->where('id', 1)->update([
+            'name'       => ''
+        ]);
+    }
+
 }

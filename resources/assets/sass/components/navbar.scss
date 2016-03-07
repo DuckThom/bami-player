@@ -56,3 +56,17 @@
     }
   }
 }
+
+.now-playing {
+  text-align: center;
+  background-color: $green-base;
+  height: 100px;
+  margin-top: -20px;
+
+  h4 {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 15px 0 50px;
+    color: white;
+  }
+}

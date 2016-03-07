@@ -10,13 +10,17 @@ use App\Video;
 
 class VideoController extends Controller
 {
-    public function update()
+    public function update(Request $request)
     {
+        if ($request->has('playing'))
+            $request->get('playing') === 'true' ? Video::stillPlaying() : false;
+
         return response()->json([
             'status'    => 'success',
             'payload'   => [
                     'upcoming'  => Video::getUpcoming(),
-                    'history'   => Video::getHistory()
+                    'history'   => Video::getHistory(),
+                    'playing'   => Video::nowPlaying()
                 ]
         ]);
     }
@@ -107,5 +111,51 @@ class VideoController extends Controller
                 'status'    => 'failed',
                 'message'   => 'A video id is required'
             ], 400);
+    }
+
+    public function is_playing()
+    {
+        return response()->json([
+            'status'  => 'success',
+            'playing' => Video::isPlaying()
+        ]);
+    }
+
+    public function now_playing(Request $request)
+    {
+        $validator = \Validator::make($request->all(), [
+            'name'  => 'required',
+        ]);
+
+        if ($validator->passes()) {
+            Video::nowPlaying($request->get('name'));
+
+            return response()->json([
+                    'status'    => 'success',
+                    'message'   => 'Updated now playing song'
+                ]);
+
+        } else
+            return response()->json([
+                'status'    => 'failed',
+                'message'   => $validator->errors()
+            ], 400);
+    }
+
+    public function stop_playing()
+    {
+        if (Video::isPlaying())
+        {
+            Video::stopPlaying();
+
+            return response()->json([
+                'status'    => 'success',
+                'message'   => 'Removed video from now playing'
+            ]);
+        } else
+            return response()->json([
+                'status'    => 'success',
+                'message'   => 'No video is currently playing'
+            ]);
     }
 }

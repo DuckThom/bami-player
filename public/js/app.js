@@ -24,6 +24,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     var castSession = null;
     var castMedia = null;
     var searched = false;
+    var stillPlaying;
 
     var youtube = {
         ready: false,
@@ -213,6 +214,17 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
 
             youtube.player.playVideo();
 
+            $http.put('/v1/video/now_playing',
+                { name: title } ).then(
+                function success(response) {
+                    console.log(response);
+
+                },
+                function failure(response) {
+                    console.log(response);
+                }
+            );
+
             return youtube;
         } else
             return false;
@@ -228,7 +240,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 description: data.items[i].snippet.description,
                 thumbnail: data.items[i].snippet.thumbnails.default.url,
                 author: data.items[i].snippet.channelTitle
-                //length:
             });
         }
 
@@ -290,10 +301,15 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     this.pollServer = function () {
         //$log.info('Polling server');
 
-        $http.get('/v1/video/update').then(
+        if (youtube.state == 'playing' || youtube.state == 'paused') {
+            stillPlaying = true;
+        }
+
+        $http.get('/v1/video/update?playing=' + (stillPlaying ? 'true' : 'false')).then(
             function success(response) {
                 var updateUpcoming = response.data.payload.upcoming;
                 var updateHistory  = response.data.payload.history;
+                var now_playing    = response.data.payload.playing;
 
                 if (upcoming.length > 0)
                     upcoming.splice(0,upcoming.length);
@@ -301,7 +317,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 for(var i = 0; i < updateUpcoming.length; i++) {
                     upcoming.push({
                         id: updateUpcoming[i].video_id,
-                        title: (updateUpcoming[i].name.length >= 47 ? updateUpcoming[i].name.substr(0, 50) + '...' : updateUpcoming[i].name)
+                        title: updateUpcoming[i].name
                     });
                 }
 
@@ -311,9 +327,12 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 for(var i = 0; i < updateHistory.length; i++) {
                     history.push({
                         id: updateHistory[i].video_id,
-                        title: (updateHistory[i].name.length >= 47 ? updateHistory[i].name.substr(0, 50) + '...' : updateHistory[i].name)
+                        title: updateHistory[i].name
                     });
                 }
+
+                if (now_playing.name != "")
+                    youtube.videoTitle = now_playing.name;
 
                 $timeout(service.pollServer, 1000);
             },
@@ -322,6 +341,10 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 $timeout(service.pollServer, 5000)
             }
         );
+    };
+
+    this.stopPlaying = function () {
+        $http.delete('/v1/video/stop_playing');
     };
 
 }]);
@@ -342,7 +365,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
 
         setTimeout(VideosService.startPolling, 1000);
         setTimeout(function() {
-            $scope.castSupport = VideosService.checkCastSupport();
+            $scope.castSupport  = VideosService.checkCastSupport();
         }, 500);
     }
 
@@ -426,5 +449,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
             $scope.stream = {mode: 'unset'};
             $scope.streaming = false;
         }
+
+        VideosService.stopPlaying();
     };
 });
