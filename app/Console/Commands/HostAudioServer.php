@@ -43,7 +43,7 @@ class HostAudioServer extends Command
             if (isset($upcoming[0]))
             {
                 $this->info('Now playing: ' . $upcoming[0]->name);
-                exec('mpsyt playurl ' . $upcoming[0]->id);
+                exec('mpsyt playurl ' . $upcoming[0]->video_id);
                 sleep(1);
             } else
             {
