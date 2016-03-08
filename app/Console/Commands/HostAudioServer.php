@@ -49,6 +49,8 @@ class HostAudioServer extends Command
             // Check if mpsyt exists
             if (is_executable('/usr/bin/mpsyt') || is_executable('/usr/local/bin/mpsyt'))
             {
+                \File::put(storage_path('app/server-is-playing'), 'lael');
+
                 // Loop forever, use Ctrl-C to stop the command
                 while (true)
                 {
@@ -97,6 +99,10 @@ class HostAudioServer extends Command
 
             exit(1);
         }
+
+        // Try to delete the now playing file to be sure
+        if (\File::exists(storage_path('app/server-is-playing')))
+            \File::delete(storage_path('app/server-is-playing'));
 
         // Return true by default
         exit(0);

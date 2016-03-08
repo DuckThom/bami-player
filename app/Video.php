@@ -95,7 +95,7 @@ class Video extends Model {
     public static function isPlaying()
     {
         if (DB::table('now_playing')->count())
-            if (Carbon::now()->diffInSeconds(Carbon::parse(DB::table('now_playing')->first()->updated_at)) < 10)
+            if (Carbon::now()->diffInSeconds(Carbon::parse(DB::table('now_playing')->first()->updated_at)) < 10 || \File::exists(storage_path('app/server-is-playing')))
                 return true;
             else
                 self::stopPlaying();
@@ -146,6 +146,9 @@ class Video extends Model {
      */
     public static function stopPlaying()
     {
+        if (\File::exists(storage_path('app/server-is-playing')))
+            \File::delete(storage_path('app/server-is-playing'));
+
         DB::table('now_playing')->where('id', 1)->update([
             'name'       => ''
         ]);
