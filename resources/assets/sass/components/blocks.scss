@@ -57,6 +57,32 @@
   overflow-x: hidden;
   position: relative;
 
+  table {
+    table-layout: fixed;
+
+    tr {
+      td {
+        border-top: 0 !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .remove-item {
+        width: 60px;
+
+        &:hover {
+          background-color: rgba(0,0,0,0.3);
+          cursor: pointer;
+        }
+      }
+
+      &:hover {
+        background-color: $deep-orange-dark;
+      }
+    }
+  }
+
   ol {
     list-style: none;
     border-bottom: 1px solid $deep-orange-dark;
@@ -64,21 +90,6 @@
     overflow-x: hidden;
     cursor: pointer;
     padding-left: 0;
-  }
-
-  tr {
-    td {
-      border-top: 0 !important;
-    }
-
-    .remove-item:hover {
-      background-color: rgba(0,0,0,0.3);
-      cursor: pointer;
-    }
-
-    &:hover {
-      background-color: $deep-orange-dark;
-    }
   }
 }
 
@@ -90,11 +101,21 @@
 
   .tab-btn {
     text-align: center;
-    background-color: $deep-orange-dark;
+    background-color: $deep-orange-base;
     color: white;
     width: 100%;
     padding: 20px 0;
     display: block;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $deep-orange-dark;
+      text-decoration: none;
+    }
+  }
+
+  .on {
+    background-color: $deep-orange-dark;
   }
 }
 

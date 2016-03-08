@@ -330,7 +330,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                         title: updateHistory[i].name
                     });
                 }
-                
+
                 youtube.videoTitle = now_playing.name;
 
                 $timeout(service.pollServer, 1000);

@@ -94,7 +94,7 @@
                                 <tbody>
                                     <tr ng-repeat="video in upcoming">
                                         <td>{{video.title}}</td>
-                                        <td class="remove-item" ng-click="delete('upcoming', video.id)"><i class="glyphicon glyphicon-remove"></i></td>
+                                        <td class="remove-item text-center" ng-click="delete('upcoming', video.id)"><i class="glyphicon glyphicon-remove"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
