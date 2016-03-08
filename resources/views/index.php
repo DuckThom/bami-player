@@ -126,17 +126,17 @@
 
             <footer>
                 <div class="pull-left hidden-sm hidden-xs">
-                    Built with <a href="http://angularjs.org/">AngularJS</a> and <a href="https://laravel.com/">Laravel</a>. Source code available on <a href="https://github.com/DuckThom/bami-player">GitHub</a>.
+                    Built with <a href="https://angularjs.org/">AngularJS</a> and <a href="https://laravel.com/">Laravel</a>. Source code available on <a href="https://github.com/DuckThom/bami-player">GitHub</a>.
                 </div>
                 <div class="pull-right">
-                    <em>Made by: <a href="http://lunamoonfang.nl">T. Wiringa</a> - Original design by: <a href="http://jgthms.com/">J. Thomas</a></em>
+                    <em>Made by: <a href="https://lunamoonfang.nl">T. Wiringa</a> - Original design by: <a href="https://jgthms.com/">J. Thomas</a></em>
                 </div>
             </footer>
         </div>
 
         <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-        <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
 
         <script src="/js/angular.min.js"></script>
         <script src="/js/app.js"></script>

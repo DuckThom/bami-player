@@ -71,7 +71,7 @@ class HostAudioServer extends Command
                         Video::archive($upcoming[0]->video_id);
 
                         // Execute mps-youtube to play the video from the command line
-                        exec('mpsyt playurl ' . $upcoming[0]->video_id);
+                        passthru('mpsyt playurl ' . $upcoming[0]->video_id);
 
 
 
