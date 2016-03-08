@@ -35,7 +35,7 @@
                         <div class="collapse navbar-collapse">
                             <form class="navbar-form navbar-left" role="search" data-ng-submit="search()">
                                 <div class="form-group">
-                                    <input id="query" type="text" class="form-control" placeholder="Search">
+                                    <input id="query" name="query" type="text" class="form-control" placeholder="Search">
                                 </div>
                                 <button type="submit" class="btn btn-default">Submit</button>
                             </form>

@@ -233,7 +233,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     this.listResults = function (data) {
         results.length = 0;
 
-        for (var i = data.items.length - 1; i >= 0; i--) {
+        for (var i = 0; i < data.items.length; i++) {
             results.push({
                 id: data.items[i].id.videoId,
                 title: data.items[i].snippet.title,
@@ -394,6 +394,8 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     $scope.search = function () {
         $scope.searched = true;
 
+        console.log($('#query').val());
+
         $http.get('https://www.googleapis.com/youtube/v3/search', {
                 params: {
                     key: 'AIzaSyANLGjM3FH5DsqkkLHFO_K5QOb5SdF47qk',
@@ -401,7 +403,9 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
                     maxResults: '8',
                     part: 'id,snippet',
                     fields: 'items/id,items/snippet/title,items/snippet/description,items/snippet/thumbnails/default,items/snippet/channelTitle',
-                    videoSyndicated: true, // Limit search to videos that are allowed to play outside youtube.com
+                    regionCode: 'us',
+                    relevanceLanguage: 'en',
+                    //videoSyndicated: true, // Limit search to videos that are allowed to play outside youtube.com
                     q: $('#query').val()
                 }
             })
