@@ -37,6 +37,8 @@ class HostAudioServer extends Command
     public function handle()
     {
         pcntl_signal(SIGINT, function() {
+            $this->info('Stopping server...');
+
             Video::stopPlaying();
 
             exit(0);
@@ -60,13 +62,16 @@ class HostAudioServer extends Command
                         // Show which video we are about to play
                         $this->info('Now playing: ' . $upcoming[0]->name);
 
+                        // Set the now playing text
                         Video::nowPlaying($upcoming[0]->name);
+
+                        // Remove the video from upcoming
+                        Video::archive($upcoming[0]->video_id);
 
                         // Execute mps-youtube to play the video from the command line
                         exec('mpsyt playurl ' . $upcoming[0]->video_id);
 
-                        // Remove the video from upcoming
-                        Video::archive($upcoming[0]->video_id);
+
 
                         // Sleep for 1 second
                         sleep(1);
