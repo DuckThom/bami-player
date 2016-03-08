@@ -125,11 +125,11 @@
             </div>
 
             <footer>
-                <div class="pull-left">
+                <div class="pull-left hidden-sm hidden-xs">
                     Built with <a href="http://angularjs.org/">AngularJS</a> and <a href="https://laravel.com/">Laravel</a>. Source code available on <a href="https://github.com/DuckThom/bami-player">GitHub</a>.
                 </div>
                 <div class="pull-right">
-                    <em>Made by: <a href="http://lunamoonfang.nl">T. Wiringa</a></em>
+                    <em>Made by: <a href="http://lunamoonfang.nl">T. Wiringa</a> - Original design by: <a href="http://jgthms.com/">J. Thomas</a></em>
                 </div>
             </footer>
         </div>
