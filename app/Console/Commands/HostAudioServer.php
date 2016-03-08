@@ -1,4 +1,4 @@
-<?php
+<?php declare(ticks = 1);
 
 namespace App\Console\Commands;
 
@@ -36,8 +36,14 @@ class HostAudioServer extends Command
      */
     public function handle()
     {
+        pcntl_signal(SIGINT, function() {
+            Video::stopPlaying();
+
+            exit(0);
+        });
+
         // Check if the playlist is being hosted somewhere
-        if (Video::isPlaying()) {
+        if (!Video::isPlaying()) {
             // Check if mpsyt exists
             if (is_executable('/usr/bin/mpsyt') || is_executable('/usr/local/bin/mpsyt'))
             {
@@ -69,6 +75,9 @@ class HostAudioServer extends Command
                         // No videos in upcoming
                         $this->info('Playlist empty... waiting 5 seconds...');
 
+                        // Show the clients that the server is waiting for input
+                        Video::nowPlaying('Server waiting for playlist input...');
+
                         // Sleep 5 seconds
                         sleep(5);
                     }
@@ -76,15 +85,15 @@ class HostAudioServer extends Command
             } else {
                 $this->error("'mpsyt' not found in /usr/bin and /usr/local/bin");
 
-                return false;
+                exit(1);
             }
         } else {
             $this->error("The playlist is already being hosted");
 
-            return false;
+            exit(1);
         }
 
         // Return true by default
-        return true;
+        exit(0);
     }
 }
