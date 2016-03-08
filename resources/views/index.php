@@ -41,8 +41,8 @@
                             </form>
 
                             <ul class="nav navbar-nav navbar-right">
-                                <li ng-hide="streaming"><a data-ng-click="startCast()" ng-show="castSupport">Cast</a></li>
-                                <li ng-hide="streaming"><a data-ng-click="startHost()">Host</a></li>
+                                <li ng-hide="streaming" ng-if="!youtube.videoTitle"><a data-ng-click="startCast()" ng-show="castSupport">Cast</a></li>
+                                <li ng-hide="streaming" ng-if="!youtube.videoTitle"><a data-ng-click="startHost()">Host</a></li>
 
                                 <li ng-show="streaming"><a data-ng-click="stopStream()">Stop {{ stream.mode }}ing</a></a></li>
                             </ul>
@@ -75,16 +75,20 @@
                     <div class="col-md-6 no-pad-left">
                         <div class="player">
                             <div id="placeholder">
-                                <div class="player-instructions">
-                                    <h3 ng-show="playing">This playlist is currently being hosted. Hosting is not recommended now.</h3>
-
+                                <div class="player-instructions" ng-if="!youtube.videoTitle">
                                     <h3>To start playing videos click on:</h3>
 
                                     <ul>
                                         <li ng-hide="castSupport">Google Cast extension not found.</li>
-                                        <li ng-show="castSupport"><b data-ng-click="startCast()">Cast</b> - to cast to a Cast enabled device</li>
-                                        <li><b data-ng-click="startHost()">Host</b> - to play the playlist locally</li>
+                                        <li ng-show="castSupport"><b ng-click="startCast()">Cast</b> - to cast to a Cast enabled device</li>
+                                        <li><b ng-click="startHost()">Host</b> - to play the playlist locally</li>
                                     </ul>
+                                </div>
+
+                                <div class="player-instructions" ng-if="youtube.videoTitle">
+                                    <h3 ng-if="youtube.videoTitle" class="hosting-warning">This playlist is currently being hosted.</h3>
+
+                                    <h3>Hosting here is unavailable.</h3>
                                 </div>
                             </div>
                         </div>
@@ -109,10 +113,10 @@
 
                             <div class="row tabs">
                                 <div class="col-xs-6 no-pad-right">
-                                    <a class="tab-btn" ng-class="{on:playlist}" data-ng-click="tabulate(true)">Upcoming</a>
+                                    <a class="tab-btn" ng-class="{on:playlist}" ng-click="tabulate(true)">Upcoming</a>
                                 </div>
                                 <div class="col-xs-6 no-pad-left">
-                                    <a class="tab-btn" ng-class="{on:!playlist}" data-ng-click="tabulate(false)">History</a>
+                                    <a class="tab-btn" ng-class="{on:!playlist}" ng-click="tabulate(false)">History</a>
                                 </div>
                             </div>
                         </div>
