@@ -13,14 +13,14 @@
 
 Route::group(['prefix' => 'v1'], function() {
     Route::group(['prefix' => 'video'], function() {
-        Route::get('update', 'VideoController@update');
-
         Route::put('store', 'VideoController@store');
         Route::put('archive', 'VideoController@archive');
         Route::put('now_playing', 'VideoController@now_playing');
 
         Route::delete('delete/{video_id}', 'VideoController@delete');
         Route::delete('stop_playing', 'VideoController@stop_playing');
+
+        Route::post('update', ['uses' => 'VideoController@update', 'middleware' => 'web']);
     });
 
     Route::group(['prefix' => 'vote'], function() {

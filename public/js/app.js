@@ -26,6 +26,11 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     var searched = false;
     var stillPlaying;
 
+    // Get and set the device finger print
+    new Fingerprint2().get(function(result) {
+        $rootScope.fingerprint = result;
+    });
+
     var youtube = {
         voteskip: -1,
         skipcount: 0,
@@ -307,7 +312,10 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
             stillPlaying = true;
         }
 
-        $http.get('/v1/video/update?playing=' + (stillPlaying ? 'true' : 'false')).then(
+        $http.post('/v1/video/update', {
+            playing: true,
+            fp: $rootScope.fingerprint
+        }).then(
             function success(response) { updateSuccess(response); $rootScope.$applyAsync(); $timeout(service.pollServer, 1000); },
             function failure(response) { updateFailed(response); $timeout(service.pollServer, 5000); }
         );
@@ -491,7 +499,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     $scope.startVoteSkip = function () {
         if ($scope.youtube.voteskip.status == 0) {
             $http.post('/v1/vote/start',
-                {vote: true}).then(
+                {vote: true, fp: $scope.fingerprint}).then(
                 function success(response) {
                     $scope.youtube.voteskip.status = 1;
                 },
@@ -508,7 +516,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     $scope.voteToSkip = function () {
         if ($scope.youtube.voteskip.status == 1) {
             $http.post('/v1/vote/skip',
-                {vote: true}).then(
+                {vote: true, fp: $scope.fingerprint}).then(
                 function success(response) {
                     //console.log(response);
                 },

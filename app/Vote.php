@@ -6,7 +6,7 @@ class Vote extends Model {
 
     protected $votes = 'votes';
 
-    protected $fillable = ['ip', 'vote'];
+    protected $fillable = ['ip', 'vote', 'fingerprint'];
 
     public function scopeValidVotes($query)
     {

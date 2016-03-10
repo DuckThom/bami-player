@@ -18,22 +18,29 @@ class VoteController extends Controller {
 
         if ($voteskip != 1)
         {
-            // Clear the votes table to start the new vote session
-            Vote::truncate();
+            if ($request->has('fp')) {
+                // Clear the votes table to start the new vote session
+                Vote::truncate();
 
-            Playing::first()->update([
-                'voteskip' => 1
-            ]);
+                Playing::first()->update([
+                    'voteskip' => 1
+                ]);
 
-            Vote::create([
-                'ip'    => $request->ip(),
-                'vote'  => 'yes'
-            ]);
+                Vote::create([
+                    'ip'            => $request->ip(),
+                    'fingerprint'   => $request->get('fp'),
+                    'vote'          => 'yes'
+                ]);
 
-            return response()->json([
-                'status'    => 'success',
-                'message'   => 'Voting started'
-            ]);
+                return response()->json([
+                    'status'    => 'success',
+                    'message'   => 'Voting started'
+                ]);
+            } else
+                return response()->json([
+                    'status' => 'failure',
+                    'message' => 'Request is missing a fingerprint'
+                ], 400);
         } else
             return response()->json([
                 'status'    => 'failure',
@@ -49,14 +56,20 @@ class VoteController extends Controller {
      */
     public function skip(Request $request)
     {
-        Vote::where('ip', $request->ip())->update([
-            'vote'  => 'yes'
-        ]);
+        if ($request->has('fp')) {
+            Vote::where('fingerprint', $request->get('fp'))->update([
+                'vote' => 'yes'
+            ]);
 
-        return response()->json([
-            'status'    => 'success',
-            'message'   => 'Vote recorded'
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Vote recorded'
+            ]);
+        } else
+            return response()->json([
+                'status' => 'failure',
+                'message' => 'Request is missing a fingerprint'
+            ], 400);
     }
 
 }

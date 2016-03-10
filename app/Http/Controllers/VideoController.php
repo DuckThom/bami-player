@@ -26,12 +26,13 @@ class VideoController extends Controller
             }
         }
 
-        if (Vote::where('ip', $request->ip())->count())
-            Vote::where('ip', $request->ip())->update([]);
+        if (Vote::where('fingerprint', $request->get('fp'))->count())
+            Vote::where('fingerprint', $request->get('fp'))->update([]);
         else
             Vote::create([
-                'ip'    => $request->ip(),
-                'vote'  => 'no'
+                'ip'            => $request->ip(),
+                'fingerprint'   => $request->get('fp'),
+                'vote'          => 'no'
             ]);
 
         return response()->json([

@@ -160,6 +160,7 @@
         <?php endif; ?>
 
         <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="//cdn.jsdelivr.net/fingerprintjs2/1.1.1/fingerprint2.min.js"></script>
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script src="//www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
 
