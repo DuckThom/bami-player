@@ -2,25 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Vote;
+use App\Upcoming;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Helpers\Blacklist;
-use App\Video;
+use App\Helpers\Video;
 
 class VideoController extends Controller
 {
+    /**
+     * Server polling handler
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request)
     {
         if ($request->has('playing'))
             $request->get('playing') === 'true' ? Video::stillPlaying() : false;
+
+        if (Vote::where('ip', $request->ip())->count())
+            Vote::where('ip', $request->ip())->update([]);
+        else
+            Vote::create([
+                'ip'    => $request->ip(),
+                'vote'  => 'no'
+            ]);
 
         return response()->json([
             'status'    => 'success',
             'payload'   => [
                     'upcoming'  => Video::getUpcoming(),
                     'history'   => Video::getHistory(),
-                    'playing'   => Video::nowPlaying()
+                    'playing'   => Video::nowPlaying(),
+                    'voting'    => Video::votingStatus()
                 ]
         ]);
     }
@@ -35,9 +52,12 @@ class VideoController extends Controller
         if ($validator->passes()) {
             if (Blacklist::checkName($request->get('name')))
             {
-                if (!Video::isUpcoming($request->get('video_id')))
+                if (Upcoming::getVideo($request->get('video_id'))->count() === 0)
                 {
-                    Video::setUpcoming($request->get('name'), $request->get('video_id'));
+                    Upcoming::firstOrCreate([
+                        'video_id'  => $request->get('video_id'),
+                        'name'      => $request->get('name')
+                    ]);
 
                     return response()->json([
                         'status'    => 'success',
@@ -131,9 +151,9 @@ class VideoController extends Controller
             Video::nowPlaying($request->get('name'));
 
             return response()->json([
-                    'status'    => 'success',
-                    'message'   => 'Updated now playing song'
-                ]);
+                'status'    => 'success',
+                'message'   => 'Updated now playing song'
+            ]);
 
         } else
             return response()->json([

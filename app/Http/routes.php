@@ -22,6 +22,11 @@ Route::group(['prefix' => 'v1'], function() {
         Route::delete('delete/{video_id}', 'VideoController@delete');
         Route::delete('stop_playing', 'VideoController@stop_playing');
     });
+
+    Route::group(['prefix' => 'vote'], function() {
+        Route::post('start', 'VoteController@start');
+        Route::post('skip', 'VoteController@skip');
+    });
 });
 
 /*

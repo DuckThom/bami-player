@@ -94,6 +94,23 @@
                         </div>
 
                         <div class="playlist">
+
+                            <div class="text-center" ng-if="youtube.voteskip.status == 4">
+                                Skip this song?
+                            </div>
+
+                            <table class="table text-center" id="voteskip" ng-if="youtube.voteskip.status == 0 || youtube.voteskip.status == 1">
+                                <tbody>
+                                    <tr class="vote-skip" ng-if="youtube.voteskip.status == 0">
+                                        <td ng-click="startVoteSkip()">Vote to skip</td>
+                                    </tr>
+
+                                    <tr class="vote-skip"  ng-if="youtube.voteskip.status == 1">
+                                        <td ng-click="voteToSkip()">Vote to skip ({{youtube.voteskip.yes}} 'Yes' votes. Needed: {{youtube.voteskip.needed}})</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
                             <table class="table" id="upcoming" ng-show="playlist">
                                 <tbody>
                                     <tr ng-repeat="video in upcoming">

@@ -27,6 +27,8 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
     var stillPlaying;
 
     var youtube = {
+        voteskip: -1,
+        skipcount: 0,
         ready: false,
         player: null,
         playerId: null,
@@ -218,7 +220,6 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
                 { name: title } ).then(
                 function success(response) {
                     console.log(response);
-
                 },
                 function failure(response) {
                     console.log(response);
@@ -306,41 +307,63 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
         }
 
         $http.get('/v1/video/update?playing=' + (stillPlaying ? 'true' : 'false')).then(
-            function success(response) {
-                var updateUpcoming = response.data.payload.upcoming;
-                var updateHistory  = response.data.payload.history;
-                var now_playing    = response.data.payload.playing;
-
-                if (upcoming.length > 0)
-                    upcoming.splice(0,upcoming.length);
-
-                for(var i = 0; i < updateUpcoming.length; i++) {
-                    upcoming.push({
-                        id: updateUpcoming[i].video_id,
-                        title: updateUpcoming[i].name
-                    });
-                }
-
-                if (history.length > 0)
-                    history.splice(0,history.length);
-
-                for(var i = 0; i < updateHistory.length; i++) {
-                    history.push({
-                        id: updateHistory[i].video_id,
-                        title: updateHistory[i].name
-                    });
-                }
-
-                youtube.videoTitle = now_playing.name;
-
-                $timeout(service.pollServer, 1000);
-            },
-            function failure(response) {
-                $log.error(response);
-                $timeout(service.pollServer, 5000)
-            }
+            function success(response) { updateSuccess(response); $rootScope.$applyAsync(); $timeout(service.pollServer, 1000); },
+            function failure(response) { updateFailed(response); $timeout(service.pollServer, 5000); }
         );
     };
+
+    function updateSuccess(response) {
+        var updateUpcoming = response.data.payload.upcoming;
+        var updateHistory  = response.data.payload.history;
+        var now_playing    = response.data.payload.playing;
+        var voting         = response.data.payload.voting;
+
+        youtube.voteskip   =  {
+            status:     voting.status,
+            total:      voting.total,
+            yes:        voting.yes,
+            percentage: (voting.yes / voting.total) * 100,
+            needed:     Math.ceil(voting.total * 0.6)
+        };
+
+        if (upcoming.length > 0)
+            upcoming.splice(0,upcoming.length);
+
+        for(var i = 0; i < updateUpcoming.length; i++) {
+            upcoming.push({
+                id: updateUpcoming[i].video_id,
+                title: updateUpcoming[i].name
+            });
+        }
+
+        if (history.length > 0)
+            history.splice(0,history.length);
+
+        for(var i = 0; i < updateHistory.length; i++) {
+            history.push({
+                id: updateHistory[i].video_id,
+                title: updateHistory[i].name
+            });
+        }
+
+        youtube.videoTitle = now_playing.name;
+
+        // This is for the host
+        if (youtube.player) {
+            if (youtube.voteskip.yes >= youtube.voteskip.needed) {
+                if (typeof upcoming[0] != 'undefined') {
+                    service.launchPlayer(upcoming[0].id, upcoming[0].title);
+                    service.archiveVideo(upcoming[0].id, upcoming[0].title);
+                } else {
+                    service.launchPlayer('S5PvBzDlZGs', "Playlist empty, waiting for new videos");
+                }
+            }
+        }
+    }
+
+    function updateFailed(response) {
+        $log.error(response);
+    }
 
     this.stopPlaying = function () {
         $http.delete('/v1/video/stop_playing').then(
@@ -461,5 +484,38 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
         }
 
         VideosService.stopPlaying();
+    };
+
+    $scope.startVoteSkip = function () {
+        if ($scope.youtube.voteskip.status == 0) {
+            $http.post('/v1/vote/start',
+                {vote: true}).then(
+                function success(response) {
+                    $scope.youtube.voteskip.status = 1;
+                },
+                function failure(response) {
+                    $log.error(response);
+                }
+            );
+        } else {
+            alert('Voting already active');
+        }
+
+    };
+
+    $scope.voteToSkip = function () {
+        if ($scope.youtube.voteskip.status == 1) {
+            $http.post('/v1/vote/skip',
+                {vote: true}).then(
+                function success(response) {
+                    //console.log(response);
+                },
+                function failure(response) {
+                    $log.error(response);
+                }
+            );
+        } else {
+            alert('No skipvote in progress');
+        }
     };
 });

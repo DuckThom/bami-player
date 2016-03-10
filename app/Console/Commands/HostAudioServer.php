@@ -73,8 +73,6 @@ class HostAudioServer extends Command
                         // Execute mps-youtube to play the video from the command line
                         passthru('mpsyt playurl ' . $upcoming[0]->video_id);
 
-
-
                         // Sleep for 1 second
                         sleep(1);
                     } else

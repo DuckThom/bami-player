@@ -1,31 +1,13 @@
-<?php namespace App;
+<?php namespace App\Helpers;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
-use DB;
+use App\Upcoming;
+use App\Playing;
+use App\History;
+use App\Vote;
 
-class Video extends Model {
-
-    protected $guarded = ['id'];
-
-    protected $dates = ['created_at', 'updated_at'];
-
-    /**
-     * Add a video to the list of upcoming videos
-     *
-     * @param $name
-     * @param $video_id
-     * @return mixed
-     */
-    public static function setUpcoming($name, $video_id)
-    {
-        return DB::table('upcoming')->insert([
-            'video_id'  => $video_id,
-            'name'      => $name,
-            'created_at'=> Carbon::now()
-        ]);
-    }
+class Video {
 
     /**
      * Remove a video from upcoming, add it to the history
@@ -35,15 +17,14 @@ class Video extends Model {
      */
     public static function archive($video_id)
     {
-        $video = DB::table('upcoming')->where('video_id', $video_id)->first();
+        $video = Upcoming::getVideo($video_id)->first();
 
-        DB::table('history')->insert([
+        History::create([
             'video_id'  => $video->video_id,
-            'name'      => $video->name,
-            'created_at'=> Carbon::now()
+            'name'      => $video->name
         ]);
 
-        DB::table('upcoming')->delete($video->id);
+        $video->delete();
     }
 
     /**
@@ -54,7 +35,7 @@ class Video extends Model {
      */
     public static function isUpcoming($video_id)
     {
-        return DB::table('upcoming')->where('video_id', $video_id)->count() > 0;
+        return Upcoming::getVideo($video_id)->count() > 0;
     }
 
     /**
@@ -64,7 +45,7 @@ class Video extends Model {
      */
     public static function getUpcoming()
     {
-        return DB::table('upcoming')->orderBy('created_at', 'asc')->get();
+        return Upcoming::orderBy('created_at', 'asc')->get();
     }
 
     /**
@@ -74,7 +55,7 @@ class Video extends Model {
      */
     public static function getHistory()
     {
-        return DB::table('history')->orderBy('created_at', 'desc')->take(10)->get();
+        return History::orderBy('created_at', 'desc')->take(10)->get();
     }
 
     /**
@@ -84,7 +65,7 @@ class Video extends Model {
      */
     public static function removeFromPlaylist($video_id)
     {
-        DB::table('upcoming')->where('video_id', $video_id)->delete();
+        Upcoming::deleteVideo($video_id);
     }
 
     /**
@@ -94,8 +75,8 @@ class Video extends Model {
      */
     public static function isPlaying()
     {
-        if (DB::table('now_playing')->count())
-            if (Carbon::now()->diffInSeconds(Carbon::parse(DB::table('now_playing')->first()->updated_at)) < 10 || \File::exists(storage_path('app/server-is-playing')))
+        if (Playing::count())
+            if (Carbon::now()->diffInSeconds(Carbon::parse(Playing::first()->updated_at)) < 10 || \File::exists(storage_path('app/server-is-playing')))
                 return true;
             else
                 self::stopPlaying();
@@ -112,19 +93,24 @@ class Video extends Model {
     public static function nowPlaying($name = null)
     {
         if ($name === null)
-            return self::isPlaying() ? DB::table('now_playing')->first() : false;
+            return self::isPlaying() ? Playing::first() : false;
         else {
-            if (DB::table('now_playing')->count()) {
-                $now_playing = DB::table('now_playing')->where('id', 1)->update([
-                    'name'       => $name,
-                    'updated_at' => Carbon::now()
+            if (Playing::count()) {
+                $now_playing = Playing::first()->update([
+                    'name'      => $name,
+                    'voteskip'  => 0
                 ]);
             } else {
-                $now_playing = DB::table('now_playing')->insert([
-                    'name'       => $name,
-                    'updated_at' => Carbon::now()
+                $now_playing = Playing::create([
+                    'name'      => $name,
+                    'voteskip'  => 0
                 ]);
             }
+
+            // Reset all the votes back to 'no'
+            Vote::where('vote', 'yes')->update([
+                'vote' => 'no'
+            ]);
 
             return $now_playing;
         }
@@ -136,7 +122,7 @@ class Video extends Model {
      */
     public static function stillPlaying()
     {
-        DB::table('now_playing')->where('id', 1)->update([
+        Playing::first()->update([
             'updated_at' => Carbon::now()
         ]);
     }
@@ -149,9 +135,24 @@ class Video extends Model {
         if (\File::exists(storage_path('app/server-is-playing')))
             \File::delete(storage_path('app/server-is-playing'));
 
-        DB::table('now_playing')->where('id', 1)->update([
-            'name'       => ''
+        Playing::first()->update([
+            'name'       => '',
+            'voting'     => -1
         ]);
+    }
+
+    /**
+     * Return the voting status of the currently playing song
+     *
+     * @return array
+     */
+    public static function votingStatus()
+    {
+        return [
+            'status'    => Playing::first()->voteskip,
+            'yes'       => Vote::where('vote', 'yes')->validVotes()->count(),
+            'total'     => Vote::validVotes()->count()
+        ];
     }
 
 }
