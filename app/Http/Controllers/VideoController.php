@@ -22,7 +22,7 @@ class VideoController extends Controller
     {
         if ($request->has('playing') && Video::nowPlaying() !== false) {
             if (Video::nowPlaying()->name !== "") {
-                $request->get('playing') === 'true' ? Video::stillPlaying() : false;
+                $request->get('playing') === true ? Video::stillPlaying() : false;
             }
         }
 
