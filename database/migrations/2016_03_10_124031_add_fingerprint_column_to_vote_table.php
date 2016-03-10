@@ -20,7 +20,7 @@ class AddFingerprintColumnToVoteTable extends Migration
              *  1: active
              *  2: failed
              */
-            $table->string('fingerprint');
+            $table->string('fingerprint')->default('');
         });
     }
 
