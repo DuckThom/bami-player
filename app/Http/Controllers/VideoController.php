@@ -20,8 +20,11 @@ class VideoController extends Controller
      */
     public function update(Request $request)
     {
-        if ($request->has('playing'))
-            $request->get('playing') === 'true' ? Video::stillPlaying() : false;
+        if ($request->has('playing') && Video::nowPlaying() !== false) {
+            if (Video::nowPlaying()->name !== "") {
+                $request->get('playing') === 'true' ? Video::stillPlaying() : false;
+            }
+        }
 
         if (Vote::where('ip', $request->ip())->count())
             Vote::where('ip', $request->ip())->update([]);

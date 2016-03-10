@@ -44,6 +44,7 @@ class WipeAllTables extends Command
 
         if (Video::isPlaying())
         {
+            $this->warn('A video is playing right now!');
             if ($this->confirm('It appears that someone it using the app right now. Are you sure you want to nuke it? [y|N]')) {
                 self::nuke_db();
             } else {

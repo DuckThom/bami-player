@@ -303,6 +303,7 @@ app.service('VideosService', ['$window', '$rootScope', '$log', '$http', '$timeou
         //$log.info('Polling server');
 
         if (youtube.state == 'playing' || youtube.state == 'paused') {
+            //console.log(youtube.state);
             stillPlaying = true;
         }
 
@@ -417,7 +418,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
     $scope.search = function () {
         $scope.searched = true;
 
-        console.log($('#query').val());
+        //console.log($('#query').val());
 
         $http.get('https://www.googleapis.com/youtube/v3/search', {
                 params: {
@@ -481,6 +482,7 @@ app.controller('VideosController', function ($scope, $http, $log, VideosService)
         if ($scope.streaming == true) {
             $scope.stream = {mode: 'unset'};
             $scope.streaming = false;
+            $scope.youtube.state = 'ended';
         }
 
         VideosService.stopPlaying();

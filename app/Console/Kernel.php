@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        if (env('DEMO_MODE', false))
+            $schedule->exec('echo "" | php ' . app_path() . '/../artisan db:nuke')->daily();
     }
 }

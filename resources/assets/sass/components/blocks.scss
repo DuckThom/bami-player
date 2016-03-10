@@ -161,3 +161,15 @@
   white-space: nowrap;
   width: 100%;
 }
+
+.demo-block {
+  position: fixed;
+  bottom: 0;
+  left: 20px;
+  background-color: $blue-grey-light;
+
+  p {
+    width: 300px;
+    padding: 20px;
+  }
+}
