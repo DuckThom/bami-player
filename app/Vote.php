@@ -10,7 +10,10 @@ class Vote extends Model {
 
     public function scopeValidVotes($query)
     {
-        return $query->where('updated_at', '>', \DB::raw('DATE_SUB(NOW(), INTERVAL 10 SECOND)'));
+        if (env('DB_CONNECTION') === 'sqlite')
+            return $query->where('updated_at', '>', \DB::raw('datetime("now", "-10 seconds")'));
+        else
+            return $query->where('updated_at', '>', \DB::raw('DATE_SUB(NOW(), INTERVAL 10 SECOND)'));
     }
 
 }
