@@ -42,6 +42,14 @@ class VideoController extends Controller
         ]);
     }
 
+    /**
+     * Try to save a video to the upcoming playlist
+     *
+     * TODO: Prevent duplicate entries when spamming this function
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request)
     {
         $validator = \Validator::make($request->all(), [
@@ -82,6 +90,12 @@ class VideoController extends Controller
             ], 400);
     }
 
+    /**
+     * Move a video to the history
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function archive(Request $request)
     {
         $validator = \Validator::make($request->all(), [
@@ -110,6 +124,12 @@ class VideoController extends Controller
             ], 400);
     }
 
+    /**
+     * Remove a video from upcoming without moving it to history
+     *
+     * @param $video_id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function delete($video_id)
     {
         if ($video_id !== null) {
@@ -133,6 +153,11 @@ class VideoController extends Controller
             ], 400);
     }
 
+    /**
+     * Check if a video is playing
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function is_playing()
     {
         return response()->json([
@@ -141,6 +166,12 @@ class VideoController extends Controller
         ]);
     }
 
+    /**
+     * Get or set the currently playing song
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function now_playing(Request $request)
     {
         $validator = \Validator::make($request->all(), [
@@ -162,6 +193,11 @@ class VideoController extends Controller
             ], 400);
     }
 
+    /**
+     * Remove the song from now playing
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function stop_playing()
     {
         if (Video::isPlaying())
