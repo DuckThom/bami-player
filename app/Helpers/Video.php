@@ -137,7 +137,7 @@ class Video {
 
         Playing::first()->update([
             'name'       => '',
-            'voting'     => -1
+            'voteskip'   => -1
         ]);
     }
 
@@ -149,7 +149,7 @@ class Video {
     public static function votingStatus()
     {
         return [
-            'status'    => Playing::first()->voteskip,
+            'status'    => (Playing::count() ? Playing::first()->voteskip : -1),
             'yes'       => Vote::where('vote', 'yes')->validVotes()->count(),
             'total'     => Vote::validVotes()->count()
         ];
