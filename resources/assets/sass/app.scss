@@ -9,6 +9,8 @@
 @import "components/video";
 @import "components/footer";
 
+@import "plugins/outdatedbrowser";
+
 body, html {
   font-family: 'Montserrat', sans-serif;
   background: url('/img/shattered.png');

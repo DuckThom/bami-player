@@ -20,6 +20,10 @@
 
     <body data-ng-controller="VideosController">
 
+        <script src="/js/outdatedbrowser.min.js"></script>
+
+        <div id="outdated"></div>
+
         <div class="container">
             <header>
                 <nav class="navbar navbar-bamiplayer">
